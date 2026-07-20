@@ -4,8 +4,45 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: freelancescope-app
+    command: sh -c "chown -R www-data:www-data storage bootstrap/cache && php-fpm"
+    expose:
+      - 9000
+    environment:
+      APP_URL: http://localhost
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: freelancescope
+      DB_USERNAME: freelancescope
+      DB_PASSWORD: secret
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - freelancescope
+  nginx:
+    image: nginx:alpine
+    container_name: freelancescope-nginx
     ports:
-      - "8000:8000"
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - freelancescope
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: freelancescope-queue
+    command: sh -c "chown -R www-data:www-data storage bootstrap/cache && php artisan queue:work --tries=3"
     environment:
       DB_CONNECTION: mysql
       DB_HOST: db
@@ -25,7 +62,7 @@ services:
     image: mysql:8.4
     container_name: freelancescope-db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       MYSQL_DATABASE: freelancescope
       MYSQL_USER: freelancescope
@@ -37,27 +74,6 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
-    networks:
-      - freelancescope
-
-  queue:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: freelancescope-queue
-    command: php artisan queue:work --tries=3
-    environment:
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: freelancescope
-      DB_USERNAME: freelancescope
-      DB_PASSWORD: secret
-    volumes:
-      - .:/var/www/html
-    depends_on:
-      db:
-        condition: service_healthy
     networks:
       - freelancescope
 
