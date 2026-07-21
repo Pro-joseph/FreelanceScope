@@ -20,12 +20,14 @@ class Devis extends Model
         'conditions',
         'status',
         'pdf_path',
+        'pdf_generated_at',
     ];
 
     protected function casts(): array
     {
         return [
             'total_amount' => 'decimal:2',
+            'pdf_generated_at' => 'datetime',
         ];
     }
 
