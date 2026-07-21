@@ -11,7 +11,7 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        abort_unless($request->user()?->role === UserRole::Admin, 403);
+        abort_if($request->user()?->role !== UserRole::Admin, 403, 'Accès admin requis.');
 
         return $next($request);
     }

@@ -20,16 +20,17 @@ class DevisResource extends JsonResource
                 'name' => $this->project->name,
                 'description' => $this->project->description,
             ],
-            'features' => $this->whenLoaded('project.features', function () {
-                return $this->project->features->map(fn ($feature) => [
+            'features' => $this->when(
+                $this->relationLoaded('project') && $this->project->relationLoaded('features'),
+                fn () => $this->project->features->map(fn ($feature) => [
                     'name' => $feature->name,
                     'description' => $feature->description,
                     'complexity' => $feature->complexity,
                     'hourly_rate' => $feature->estimate?->hourly_rate,
                     'total_hours' => $feature->estimate?->total_hours,
                     'total_amount' => $feature->estimate?->total_amount,
-                ]);
-            }),
+                ]),
+            ),
             'total_amount' => $this->total_amount,
             'conditions' => $this->conditions,
             'status' => $this->status,
