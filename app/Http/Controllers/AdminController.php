@@ -49,7 +49,7 @@ class AdminController extends Controller
 
     public function updateFreelance(Request $request, User $user): JsonResponse
     {
-        abort_if($user->role !== UserRole::Freelance, 404);
+        $this->authorize('update', $user);
 
         $validated = $request->validate([
             'nom' => ['sometimes', 'string', 'max:255'],
@@ -66,7 +66,7 @@ class AdminController extends Controller
 
     public function toggleStatut(User $user): JsonResponse
     {
-        abort_if($user->role !== UserRole::Freelance, 404);
+        $this->authorize('toggleStatut', $user);
 
         $user->update([
             'statut' => $user->statut === 'actif' ? 'inactif' : 'actif',
@@ -77,7 +77,7 @@ class AdminController extends Controller
 
     public function destroyFreelance(User $user): JsonResponse
     {
-        abort_if($user->role !== UserRole::Freelance, 404);
+        $this->authorize('delete', $user);
 
         $user->delete();
 

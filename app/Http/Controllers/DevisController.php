@@ -69,8 +69,17 @@ class DevisController extends Controller
     {
         $this->authorize('view', $devis);
 
-        $path = $this->devisService->generatePdf($devis);
+        if ($this->devisService->needsRegeneration($devis)) {
+            $this->devisService->generatePdf($devis);
+        }
 
-        return response()->download(public_path($path));
+        $path = $this->devisService->getPdfPath($devis);
+
+        abort_if(is_null($path), 404);
+
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="devis_'.$devis->id.'.pdf"',
+        ]);
     }
 }

@@ -5,5 +5,6 @@ use App\Providers\TelescopeServiceProvider;
 
 return [
     AppServiceProvider::class,
+    AuthServiceProvider::class,
     TelescopeServiceProvider::class,
 ];

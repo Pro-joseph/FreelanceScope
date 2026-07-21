@@ -8,6 +8,7 @@ use App\Models\Estimate;
 use App\Models\ProjectFeature;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class DevisService
 {
@@ -45,8 +46,9 @@ class DevisService
 
     public function generatePdf(Devis $devis): string
     {
-        $devis->load(['client', 'project.features.estimate']);
+        $filename = "devis_{$devis->id}.pdf";
 
+        $devis->load(['client', 'project.features.estimate']);
         $user = $devis->client->user;
 
         $pdf = Pdf::loadView('pdf.devis', [
@@ -54,13 +56,38 @@ class DevisService
             'user' => $user,
         ]);
 
-        $filename = "devis_{$devis->id}.pdf";
-        $path = "pdf/{$filename}";
-        $pdf->save(storage_path("app/public/{$path}"));
+        Storage::disk('devis')->put($filename, $pdf->output());
 
-        $devis->update(['pdf_path' => "storage/{$path}"]);
+        $devis->update([
+            'pdf_path' => $filename,
+            'pdf_generated_at' => now(),
+        ]);
 
-        return $devis->pdf_path;
+        return $filename;
+    }
+
+    public function needsRegeneration(Devis $devis): bool
+    {
+        if (! $devis->pdf_path) {
+            return true;
+        }
+
+        if (! $devis->pdf_generated_at) {
+            return true;
+        }
+
+        return $devis->updated_at->gt($devis->pdf_generated_at);
+    }
+
+    public function getPdfPath(Devis $devis): ?string
+    {
+        if (! $devis->pdf_path) {
+            return null;
+        }
+
+        $fullPath = Storage::disk('devis')->path($devis->pdf_path);
+
+        return file_exists($fullPath) ? $fullPath : null;
     }
 
     public function update(Devis $devis, array $data): Devis
