@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AIController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\FreelanceController;
@@ -20,6 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/features/{feature}/estimate', [EstimateController::class, 'show']);
     Route::put('/estimates/{estimate}', [EstimateController::class, 'update']);
+
+    Route::post('/projects/{project}/generate-estimate', AIController::class);
 });
 
 Route::prefix('freelance')
