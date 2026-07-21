@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\FreelanceController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectFeatureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('projects', ProjectController::class);
+    Route::apiResource('projects.features', ProjectFeatureController::class)->shallow();
 });
 
 Route::prefix('freelance')
