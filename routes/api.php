@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\FreelanceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectFeatureController;
@@ -16,6 +17,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('projects', ProjectController::class);
     Route::apiResource('projects.features', ProjectFeatureController::class)->shallow();
+
+    Route::get('/features/{feature}/estimate', [EstimateController::class, 'show']);
+    Route::put('/estimates/{estimate}', [EstimateController::class, 'update']);
 });
 
 Route::prefix('freelance')
