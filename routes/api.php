@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AIController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DevisController;
 use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\FreelanceController;
 use App\Http\Controllers\ProjectController;
@@ -23,6 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/estimates/{estimate}', [EstimateController::class, 'update']);
 
     Route::post('/projects/{project}/generate-estimate', AIController::class);
+
+    Route::apiResource('devis', DevisController::class);
+    Route::get('/devis/{devis}/pdf', [DevisController::class, 'download']);
 });
 
 Route::prefix('freelance')

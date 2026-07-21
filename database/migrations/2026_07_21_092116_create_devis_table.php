@@ -12,7 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('estimate_id')->constrained()->cascadeOnDelete();
             $table->foreignId('client_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->decimal('total_amount', 12, 2);
+            $table->text('conditions')->nullable();
             $table->string('status')->default('draft');
             $table->string('pdf_path')->nullable();
             $table->timestamps();
