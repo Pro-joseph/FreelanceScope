@@ -1,1 +1,3 @@
-<?php echo "PHP-FPM WORKS";
+<?php
+
+echo 'PHP-FPM WORKS';
