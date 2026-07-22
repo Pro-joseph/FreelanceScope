@@ -1,0 +1,800 @@
+{
+  "info": {
+    "_postman_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "name": "FreelanceScope API",
+    "description": "Collection complète pour tester l'API FreelanceScope — token Sanctum, endpoints CRUD, génération IA, PDF devis.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "client_id",
+      "value": ""
+    },
+    {
+      "key": "project_id",
+      "value": ""
+    },
+    {
+      "key": "feature_id",
+      "value": ""
+    },
+    {
+      "key": "estimate_id",
+      "value": ""
+    },
+    {
+      "key": "devis_id",
+      "value": ""
+    },
+    {
+      "key": "freelance_user_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Doe\",\n  \"prenom\": \"John\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/register",
+              "host": ["{{base_url}}"],
+              "path": ["register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          }
+        },
+        {
+          "name": "Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user",
+              "host": ["{{base_url}}"],
+              "path": ["user"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👤 Freelance",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/freelance/profile",
+              "host": ["{{base_url}}"],
+              "path": ["freelance", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Doe\",\n  \"prenom\": \"John\",\n  \"email\": \"john@example.com\",\n  \"telephone\": \"+212600000000\",\n  \"taux_horaire\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/freelance/profile",
+              "host": ["{{base_url}}"],
+              "path": ["freelance", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/freelance/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["freelance", "dashboard"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🛡️ Admin",
+      "item": [
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "List Freelances",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/freelances",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "freelances"]
+            }
+          }
+        },
+        {
+          "name": "Create Freelance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.id) {",
+                  "    pm.collectionVariables.set('freelance_user_id', json.id);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Doe\",\n  \"prenom\": \"Jane\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"password123\",\n  \"telephone\": \"+212600000001\",\n  \"taux_horaire\": 75\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/freelances",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "freelances"]
+            }
+          }
+        },
+        {
+          "name": "Update Freelance",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Doe Updated\",\n  \"taux_horaire\": 80\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/freelances/{{freelance_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "freelances", "{{freelance_user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Freelance Statut",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/freelances/{{freelance_user_id}}/statut",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "freelances", "{{freelance_user_id}}", "statut"]
+            }
+          }
+        },
+        {
+          "name": "Delete Freelance",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/freelances/{{freelance_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "freelances", "{{freelance_user_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Ressources",
+      "item": [
+        {
+          "name": "Clients",
+          "item": [
+            {
+              "name": "List Clients",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/clients",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients"]
+                }
+              }
+            },
+            {
+              "name": "Create Client",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  var json = pm.response.json();",
+                      "  if (json.data && json.data.id) {",
+                      "    pm.collectionVariables.set('client_id', json.data.id);",
+                      "  }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corp\",\n  \"email\": \"contact@acme.com\",\n  \"phone\": \"+212600000000\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/clients",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients"]
+                }
+              }
+            },
+            {
+              "name": "Get Client",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/clients/{{client_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients", "{{client_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Update Client",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"company_name\": \"Acme Corp Updated\",\n  \"email\": \"new@acme.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/clients/{{client_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients", "{{client_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Delete Client",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/clients/{{client_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients", "{{client_id}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Projects",
+          "item": [
+            {
+              "name": "List Projects",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/projects",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects"]
+                }
+              }
+            },
+            {
+              "name": "Create Project",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  var json = pm.response.json();",
+                      "  if (json.data && json.data.id) {",
+                      "    pm.collectionVariables.set('project_id', json.data.id);",
+                      "  }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"client_id\": {{client_id}},\n  \"name\": \"Site e-commerce\",\n  \"description\": \"Site de vente en ligne avec catalogue et paiement\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/projects",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects"]
+                }
+              }
+            },
+            {
+              "name": "Get Project",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/projects/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", "{{project_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Update Project",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Site e-commerce v2\",\n  \"status\": \"in_progress\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/projects/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", "{{project_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Delete Project",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/projects/{{project_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", "{{project_id}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Features",
+          "item": [
+            {
+              "name": "List Features",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/projects/{{project_id}}/features",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", "{{project_id}}", "features"]
+                }
+              }
+            },
+            {
+              "name": "Create Feature",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  var json = pm.response.json();",
+                      "  if (json.id) {",
+                      "    pm.collectionVariables.set('feature_id', json.id);",
+                      "  }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Page d'accueil\",\n  \"description\": \"Page d'accueil avec pr\u00e9sentation\",\n  \"complexity\": \"moyen\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/projects/{{project_id}}/features",
+                  "host": ["{{base_url}}"],
+                  "path": ["projects", "{{project_id}}", "features"]
+                }
+              }
+            },
+            {
+              "name": "Get Feature",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/features/{{feature_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["features", "{{feature_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Update Feature",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Page d'accueil v2\",\n  \"complexity\": \"simple\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/features/{{feature_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["features", "{{feature_id}}"]
+                }
+              }
+            },
+            {
+              "name": "Delete Feature",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/features/{{feature_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["features", "{{feature_id}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Estimates",
+          "item": [
+            {
+              "name": "Get Estimate",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/features/{{feature_id}}/estimate",
+                  "host": ["{{base_url}}"],
+                  "path": ["features", "{{feature_id}}", "estimate"]
+                }
+              }
+            },
+            {
+              "name": "Update Estimate",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "  var json = pm.response.json();",
+                      "  if (json.data && json.data.id) {",
+                      "    pm.collectionVariables.set('estimate_id', json.data.id);",
+                      "  }",
+                      "}"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hourly_rate\": 65,\n  \"total_hours\": 20\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/estimates/{{estimate_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["estimates", "{{estimate_id}}"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "🤖 Generate AI Estimate",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Je veux un site e-commerce complet avec catalogue produits, panier, paiement Stripe, dashboard admin, et espace client. Le site doit \\u00eatre responsive et optimis\\u00e9 SEO.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/projects/{{project_id}}/generate-estimate",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "generate-estimate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📄 Devis",
+      "item": [
+        {
+          "name": "List Devis",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/devis",
+              "host": ["{{base_url}}"],
+              "path": ["devis"]
+            }
+          }
+        },
+        {
+          "name": "Create Devis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('devis_id', json.data.id);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_id\": {{client_id}},\n  \"project_id\": {{project_id}},\n  \"conditions\": \"Paiement : 50% \\u00e0 la commande, 50% \\u00e0 la livraison\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devis",
+              "host": ["{{base_url}}"],
+              "path": ["devis"]
+            }
+          }
+        },
+        {
+          "name": "Get Devis",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/devis/{{devis_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["devis", "{{devis_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Devis",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"sent\",\n  \"conditions\": \"Paiement comptant\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/devis/{{devis_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["devis", "{{devis_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Download Devis PDF",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/devis/{{devis_id}}/pdf",
+              "host": ["{{base_url}}"],
+              "path": ["devis", "{{devis_id}}", "pdf"]
+            }
+          }
+        },
+        {
+          "name": "Delete Devis",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/devis/{{devis_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["devis", "{{devis_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
