@@ -1,0 +1,185 @@
+name: Estimates
+description: |-
+
+  Consultation et mise à jour des estimations de prix pour chaque fonctionnalité.
+  Les estimations sont généralement générées automatiquement par l'IA, mais peuvent être modifiées manuellement.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/features/{feature_id}/estimate'
+    metadata:
+      custom: []
+      groupName: Estimates
+      groupDescription: |-
+
+        Consultation et mise à jour des estimations de prix pour chaque fonctionnalité.
+        Les estimations sont généralement générées automatiquement par l'IA, mais peuvent être modifiées manuellement.
+      subgroup: ''
+      subgroupDescription: ''
+      title: "Afficher l'estimation d'une fonctionnalité"
+      description: "Retourne l'estimation associée à une fonctionnalité. Si aucune estimation n'existe, retourne une erreur 404 explicite."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      feature_id:
+        custom: []
+        name: feature_id
+        description: 'The ID of the feature.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      feature:
+        custom: []
+        name: feature
+        description: "L'ID de la fonctionnalité."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      feature_id: 1
+      feature: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1, "feature_id": 1, "hourly_rate": 50,
+              "total_hours": 16, "total_amount": 800, "created_at": "..."
+            }
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "message": "Aucune estimation générée pour cette fonctionnalité.",
+            "feature_id": 1
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/estimates/{estimate_id}'
+    metadata:
+      custom: []
+      groupName: Estimates
+      groupDescription: |-
+
+        Consultation et mise à jour des estimations de prix pour chaque fonctionnalité.
+        Les estimations sont généralement générées automatiquement par l'IA, mais peuvent être modifiées manuellement.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Modifier une estimation'
+      description: "Met à jour le taux horaire et/ou le nombre d'heures. Le montant total est recalculé automatiquement."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      estimate_id:
+        custom: []
+        name: estimate_id
+        description: 'The ID of the estimate.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      estimate:
+        custom: []
+        name: estimate
+        description: "L'ID de l'estimation."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      estimate_id: 1
+      estimate: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      hourly_rate:
+        custom: []
+        name: hourly_rate
+        description: 'Le taux horaire en DH.'
+        required: false
+        example: '65'
+        type: numeric
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      total_hours:
+        custom: []
+        name: total_hours
+        description: "Le nombre d'heures estimé."
+        required: false
+        example: '20'
+        type: numeric
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      hourly_rate: '65'
+      total_hours: '20'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": { "id": 1, "hourly_rate": 65, "total_hours": 20, "total_amount": 1300, ... }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null

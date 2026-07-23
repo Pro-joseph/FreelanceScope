@@ -1,0 +1,480 @@
+name: Admin
+description: |-
+
+  Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+  Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/dashboard
+    metadata:
+      custom: []
+      groupName: Admin
+      groupDescription: |-
+
+        Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+        Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Tableau de bord admin'
+      description: 'Retourne les statistiques globales de la plateforme.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "freelances_count": 10, "clients_count": 25, "projects_count": 40, "devis_count": 8
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/freelances
+    metadata:
+      custom: []
+      groupName: Admin
+      groupDescription: |-
+
+        Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+        Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Liste des freelances'
+      description: 'Retourne la liste de tous les utilisateurs ayant le rôle `freelance`.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          [
+            { "id": 2, "nom": "Jane", "prenom": "Doe", "email": "jane@example.com", "telephone": "+212600000001", "statut": "actif", "taux_horaire": 75 }
+          ]
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/admin/freelances
+    metadata:
+      custom: []
+      groupName: Admin
+      groupDescription: |-
+
+        Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+        Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Créer un freelance'
+      description: 'Crée un nouvel utilisateur avec le rôle `freelance`.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nom:
+        custom: []
+        name: nom
+        description: 'Le nom de famille.'
+        required: true
+        example: Doe
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      prenom:
+        custom: []
+        name: prenom
+        description: 'Le prénom.'
+        required: true
+        example: Jane
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: "L'adresse email."
+        required: true
+        example: jane@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Le mot de passe.'
+        required: true
+        example: password123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      telephone:
+        custom: []
+        name: telephone
+        description: 'Le numéro de téléphone.'
+        required: false
+        example: '+212600000001'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      taux_horaire:
+        custom: []
+        name: taux_horaire
+        description: 'Le taux horaire en DH.'
+        required: false
+        example: '75'
+        type: numeric
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      nom: Doe
+      prenom: Jane
+      email: jane@example.com
+      password: password123
+      telephone: '+212600000001'
+      taux_horaire: '75'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: '{ "id": 3, "nom": "Doe", "prenom": "Jane", "email": "jane@example.com", "role": "freelance", ... }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/admin/freelances/{user_id}'
+    metadata:
+      custom: []
+      groupName: Admin
+      groupDescription: |-
+
+        Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+        Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Modifier un freelance'
+      description: "Met à jour les informations d'un freelance existant."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_id:
+        custom: []
+        name: user_id
+        description: 'The ID of the user.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: "L'ID du freelance."
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_id: 1
+      user: 2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nom:
+        custom: []
+        name: nom
+        description: 'Le nom de famille.'
+        required: false
+        example: Dupont
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      prenom:
+        custom: []
+        name: prenom
+        description: 'Le prénom.'
+        required: false
+        example: Jeanne
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: "L'adresse email."
+        required: false
+        example: jeanne@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      telephone:
+        custom: []
+        name: telephone
+        description: 'Le numéro de téléphone.'
+        required: false
+        example: '+212600000002'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      taux_horaire:
+        custom: []
+        name: taux_horaire
+        description: 'Le taux horaire en DH.'
+        required: false
+        example: '80'
+        type: numeric
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      nom: Dupont
+      prenom: Jeanne
+      email: jeanne@example.com
+      telephone: '+212600000002'
+      taux_horaire: '80'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "id": 2, "nom": "Dupont", ... }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/admin/freelances/{user_id}/statut'
+    metadata:
+      custom: []
+      groupName: Admin
+      groupDescription: |-
+
+        Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+        Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Activer / désactiver un freelance'
+      description: "Bascule le statut d'un freelance entre `actif` et `inactif`."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_id:
+        custom: []
+        name: user_id
+        description: 'The ID of the user.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: "L'ID du freelance."
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_id: 1
+      user: 2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "id": 2, "nom": "Jane", "prenom": "Doe", "statut": "inactif", ... }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/admin/freelances/{user_id}'
+    metadata:
+      custom: []
+      groupName: Admin
+      groupDescription: |-
+
+        Gestion administrative des freelances. Réservé aux utilisateurs avec le rôle `admin`.
+        Tous les endpoints nécessitent le middleware `admin` en plus de `auth:sanctum`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Supprimer un freelance'
+      description: 'Supprime définitivement un compte freelance.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_id:
+        custom: []
+        name: user_id
+        description: 'The ID of the user.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: "L'ID du freelance."
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_id: 1
+      user: 2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 204
+        content: '{}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null

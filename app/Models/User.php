@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatut;
+use App\Models\Client;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -27,5 +29,10 @@ class User extends Authenticatable
             'statut' => UserStatut::class,
             'taux_horaire' => 'decimal:2',
         ];
+    }
+
+    public function clients(): HasMany
+    {
+        return $this->hasMany(Client::class);
     }
 }

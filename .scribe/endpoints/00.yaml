@@ -1,0 +1,240 @@
+name: Auth
+description: |-
+
+  Inscription, connexion, déconnexion et récupération de l'utilisateur connecté.
+  Tous les endpoints retournent un token Sanctum à utiliser dans le header `Authorization: Bearer {token}`.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/register
+    metadata:
+      custom: []
+      groupName: Auth
+      groupDescription: |-
+
+        Inscription, connexion, déconnexion et récupération de l'utilisateur connecté.
+        Tous les endpoints retournent un token Sanctum à utiliser dans le header `Authorization: Bearer {token}`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Inscription
+      description: "Crée un nouveau compte utilisateur et retourne un token d'authentification."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nom:
+        custom: []
+        name: nom
+        description: 'Le nom de famille.'
+        required: true
+        example: Doe
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      prenom:
+        custom: []
+        name: prenom
+        description: 'Le prénom.'
+        required: true
+        example: John
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: "L'adresse email."
+        required: true
+        example: john@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Le mot de passe (min. 8 caractères).'
+        required: true
+        example: password
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      role:
+        custom: []
+        name: role
+        description: "Le rôle de l'utilisateur. Possibilités : `admin`, `freelance`. Par défaut : `freelance`."
+        required: false
+        example: freelance
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      nom: Doe
+      prenom: John
+      email: john@example.com
+      password: password
+      role: freelance
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "user": { "id": 1, "nom": "Doe", "prenom": "John", "email": "john@example.com", "role": "freelance" },
+            "token": "1|abc123..."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/login
+    metadata:
+      custom: []
+      groupName: Auth
+      groupDescription: |-
+
+        Inscription, connexion, déconnexion et récupération de l'utilisateur connecté.
+        Tous les endpoints retournent un token Sanctum à utiliser dans le header `Authorization: Bearer {token}`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Connexion
+      description: 'Authentifie un utilisateur existant et retourne un token Sanctum.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: "L'adresse email."
+        required: true
+        example: john@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Le mot de passe.'
+        required: true
+        example: password
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: john@example.com
+      password: password
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "user": { "id": 1, "nom": "Doe", "prenom": "John", "email": "john@example.com", "role": "freelance", "statut": "actif" },
+            "token": "2|xyz789..."
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Les identifiants sont incorrects.",
+            "errors": { "email": ["Les identifiants sont incorrects."] }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/logout
+    metadata:
+      custom: []
+      groupName: Auth
+      groupDescription: |-
+
+        Inscription, connexion, déconnexion et récupération de l'utilisateur connecté.
+        Tous les endpoints retournent un token Sanctum à utiliser dans le header `Authorization: Bearer {token}`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Déconnexion
+      description: "Révoque le token d'accès actuel."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "message": "Déconnecté." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null

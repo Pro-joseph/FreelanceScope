@@ -8,8 +8,25 @@ use App\Models\Devis;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @group Freelance Profile
+ *
+ * Consultation et mise à jour du profil du freelance connecté, ainsi que son tableau de bord.
+ */
 class FreelanceController extends Controller
 {
+    /**
+     * Profil du freelance
+     *
+     * Retourne les informations du profil de l'utilisateur connecté.
+     *
+     * @authenticated
+     *
+     * @response 200 {
+     *   "id": 1, "nom": "Doe", "prenom": "John", "email": "john@example.com",
+     *   "telephone": "+212600000000", "taux_horaire": 50, "statut": "actif"
+     * }
+     */
     public function profile(): JsonResponse
     {
         $user = auth()->user();
@@ -19,6 +36,24 @@ class FreelanceController extends Controller
         ));
     }
 
+    /**
+     * Mettre à jour le profil
+     *
+     * Met à jour les informations du profil de l'utilisateur connecté. Tous les champs sont optionnels.
+     *
+     * @authenticated
+     *
+     * @bodyParam nom string Le nom de famille. Example: Dupont
+     * @bodyParam prenom string Le prénom. Example: Jean
+     * @bodyParam email string L'adresse email. Example: jean@example.com
+     * @bodyParam telephone string Le numéro de téléphone. Example: +212600000000
+     * @bodyParam taux_horaire numeric Le taux horaire en DH. Example: 65
+     *
+     * @response 200 {
+     *   "id": 1, "nom": "Dupont", "prenom": "Jean", "email": "jean@example.com",
+     *   "telephone": "+212600000000", "taux_horaire": 65, "statut": "actif"
+     * }
+     */
     public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
         $user = auth()->user();
@@ -29,6 +64,17 @@ class FreelanceController extends Controller
         ));
     }
 
+    /**
+     * Tableau de bord du freelance
+     *
+     * Retourne les statistiques globales du freelance connecté.
+     *
+     * @authenticated
+     *
+     * @response 200 {
+     *   "clients_count": 5, "projects_count": 12, "devis_count": 3
+     * }
+     */
     public function dashboard(): JsonResponse
     {
         $userId = auth()->id();
