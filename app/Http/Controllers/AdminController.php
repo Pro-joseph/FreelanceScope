@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Enums\UserStatut;
 use App\Http\Requests\StoreFreelanceRequest;
 use App\Models\Client;
 use App\Models\Devis;
@@ -140,7 +141,7 @@ class AdminController extends Controller
         $this->authorize('toggleStatut', $user);
 
         $user->update([
-            'statut' => $user->statut === 'actif' ? 'inactif' : 'actif',
+            'statut' => $user->statut === UserStatut::Actif ? UserStatut::Inactif->value : UserStatut::Actif->value,
         ]);
 
         return response()->json($user);

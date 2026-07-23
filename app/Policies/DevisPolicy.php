@@ -14,7 +14,7 @@ class DevisPolicy
 
     public function view(User $user, Devis $devis): bool
     {
-        return $devis->client->user_id === $user->id;
+        return $devis->client?->user_id === $user->id;
     }
 
     public function create(User $user): bool
@@ -24,11 +24,11 @@ class DevisPolicy
 
     public function update(User $user, Devis $devis): bool
     {
-        return $devis->client->user_id === $user->id;
+        return $devis->client?->user_id === $user->id;
     }
 
     public function delete(User $user, Devis $devis): bool
     {
-        return $devis->client->user_id === $user->id;
+        return $devis->client?->user_id === $user->id;
     }
 }
