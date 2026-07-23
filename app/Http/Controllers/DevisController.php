@@ -119,6 +119,7 @@ class DevisController extends Controller
      * @authenticated
      *
      * @urlParam devis integer required L'ID du devis. Example: 1
+     *
      * @bodyParam status string Le statut. Possibilités : `draft`, `sent`, `accepted`, `refused`. Example: sent
      * @bodyParam conditions string Les conditions de paiement. Example: Paiement comptant
      *

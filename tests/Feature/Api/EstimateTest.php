@@ -1,10 +1,9 @@
 <?php
 
-use App\Models\Estimate;
-use App\Models\ProjectFeature;
-use App\Models\User;
 use App\Models\Client;
+use App\Models\Estimate;
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

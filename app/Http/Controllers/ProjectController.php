@@ -101,6 +101,7 @@ class ProjectController extends Controller
      * @authenticated
      *
      * @urlParam project integer required L'ID du projet. Example: 1
+     *
      * @bodyParam name string Le nom du projet. Example: Site e-commerce v2
      * @bodyParam description string La description du projet.
      * @bodyParam status string Le statut. Possibilités : `draft`, `in_progress`, `completed`, `cancelled`. Example: in_progress

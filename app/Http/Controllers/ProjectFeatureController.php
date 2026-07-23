@@ -44,6 +44,7 @@ class ProjectFeatureController extends Controller
      * @authenticated
      *
      * @urlParam project integer required L'ID du projet. Example: 1
+     *
      * @bodyParam name string required Le nom de la fonctionnalité. Example: Page d'accueil
      * @bodyParam description string La description. Example: Page d'accueil avec présentation
      * @bodyParam complexity string La complexité. Possibilités : `simple`, `moyen`, `complexe`. Example: moyen
@@ -86,6 +87,7 @@ class ProjectFeatureController extends Controller
      * @authenticated
      *
      * @urlParam feature integer required L'ID de la fonctionnalité. Example: 1
+     *
      * @bodyParam name string Le nom de la fonctionnalité. Example: Page d'accueil v2
      * @bodyParam description string La description.
      * @bodyParam complexity string La complexité. Possibilités : `simple`, `moyen`, `complexe`. Example: simple

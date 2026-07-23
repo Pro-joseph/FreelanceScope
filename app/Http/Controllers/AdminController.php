@@ -100,6 +100,7 @@ class AdminController extends Controller
      * @authenticated
      *
      * @urlParam user integer required L'ID du freelance. Example: 2
+     *
      * @bodyParam nom string Le nom de famille. Example: Dupont
      * @bodyParam prenom string Le prénom. Example: Jeanne
      * @bodyParam email string L'adresse email. Example: jeanne@example.com

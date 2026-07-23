@@ -60,6 +60,7 @@ class EstimateController extends Controller
      * @authenticated
      *
      * @urlParam estimate integer required L'ID de l'estimation. Example: 1
+     *
      * @bodyParam hourly_rate numeric Le taux horaire en DH. Example: 65
      * @bodyParam total_hours numeric Le nombre d'heures estimé. Example: 20
      *

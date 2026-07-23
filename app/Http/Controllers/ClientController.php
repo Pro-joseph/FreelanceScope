@@ -108,6 +108,7 @@ class ClientController extends Controller
      * @authenticated
      *
      * @urlParam client integer required L'ID du client. Example: 1
+     *
      * @bodyParam company_name string Le nom de l'entreprise. Example: Acme Corp Updated
      * @bodyParam email string L'email du client. Example: new@acme.com
      * @bodyParam phone string Le numéro de téléphone. Example: +212600000001

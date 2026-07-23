@@ -25,6 +25,7 @@ class AIController extends Controller
      * @authenticated
      *
      * @urlParam project integer required L'ID du projet. Example: 1
+     *
      * @bodyParam prompt string required La description détaillée du projet. Example: Je veux un site e-commerce complet avec catalogue produits, panier, paiement Stripe, dashboard admin, et espace client.
      *
      * @response 202 {
@@ -44,5 +45,35 @@ class AIController extends Controller
         return response()->json([
             'message' => 'Estimation en cours de génération.',
         ], 202);
+    }
+
+    /**
+     * Historique des analyses IA
+     *
+     * Retourne toutes les analyses IA générées pour un projet donné.
+     *
+     * @authenticated
+     *
+     * @urlParam project integer required L'ID du projet. Example: 1
+     *
+     * @response 200 [
+     *   {
+     *     "id": 1,
+     *     "project_id": 1,
+     *     "prompt": "Je veux un site e-commerce...",
+     *     "response": "...",
+     *     "model": "llama-3.3-70b-versatile",
+     *     "tokens_used": 1500,
+     *     "created_at": "2026-07-21T12:00:00.000000Z"
+     *   }
+     * ]
+     */
+    public function analyses(Project $project): JsonResponse
+    {
+        $this->authorize('view', $project);
+
+        $analyses = $project->aiAnalyses()->latest()->get();
+
+        return response()->json($analyses);
     }
 }

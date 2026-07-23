@@ -12,28 +12,69 @@ use App\Http\Controllers\ProjectFeatureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [ApiAuthController::class, 'register'])->middleware('guest');
-Route::post('/login', [ApiAuthController::class, 'login'])->middleware('guest');
+/*
+|--------------------------------------------------------------------------
+| API Routes — aligned with Angular client expectations
+|--------------------------------------------------------------------------
+|
+| All routes match the URL structure expected by FreelanceScope_Angular.
+| Auth routes are under /auth, devis routes are nested under /projects,
+| and features have a nested update route.
+|
+*/
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+// ─── Public Auth Routes ───────────────────────────────────────────────
+
+Route::prefix('auth')->middleware('guest')->group(function () {
+    Route::post('/register', [ApiAuthController::class, 'register']);
+    Route::post('/login', [ApiAuthController::class, 'login']);
+    Route::post('/forgot-password', [ApiAuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [ApiAuthController::class, 'resetPassword']);
 });
 
-Route::post('/logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
+// ─── Authenticated Routes ─────────────────────────────────────────────
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('clients', ClientController::class);
-    Route::apiResource('projects', ProjectController::class);
-    Route::apiResource('projects.features', ProjectFeatureController::class)->shallow();
+    // Auth
+    Route::get('/auth/me', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('/auth/logout', [ApiAuthController::class, 'logout']);
 
+    // Clients
+    Route::apiResource('clients', ClientController::class);
+
+    // Projects
+    Route::apiResource('projects', ProjectController::class);
+
+    // Project Features — nested for list/create, shallow for show/destroy
+    Route::get('/projects/{project}/features', [ProjectFeatureController::class, 'index']);
+    Route::post('/projects/{project}/features', [ProjectFeatureController::class, 'store']);
+    Route::get('/features/{feature}', [ProjectFeatureController::class, 'show']);
+    Route::put('/projects/{project}/features/{feature}', [ProjectFeatureController::class, 'update']);
+    Route::delete('/features/{feature}', [ProjectFeatureController::class, 'destroy']);
+
+    // Estimates
     Route::get('/features/{feature}/estimate', [EstimateController::class, 'show']);
     Route::put('/estimates/{estimate}', [EstimateController::class, 'update']);
 
-    Route::post('/projects/{project}/generate-estimate', AIController::class);
+    // AI Estimation & Analyses
+    Route::post('/projects/{project}/ai-estimate', AIController::class);
+    Route::get('/projects/{project}/ai-analyses', [AIController::class, 'analyses']);
 
-    Route::apiResource('devis', DevisController::class);
-    Route::get('/devis/{devis}/pdf', [DevisController::class, 'download']);
+    // Devis — nested under projects (matching Angular DevisService)
+    Route::get('/projects/{project}/devis', [DevisController::class, 'index']);
+    Route::post('/projects/{project}/devis', [DevisController::class, 'store']);
+    Route::get('/projects/{project}/devis/{devis}', [DevisController::class, 'show']);
+    Route::put('/projects/{project}/devis/{devis}', [DevisController::class, 'update']);
+    Route::delete('/projects/{project}/devis/{devis}', [DevisController::class, 'destroy']);
+    Route::get('/projects/{project}/devis/{devis}/pdf', [DevisController::class, 'download']);
+
+    // Dashboard
+    Route::get('/dashboard/stats', [FreelanceController::class, 'dashboard']);
 });
+
+// ─── Freelance Profile Routes ─────────────────────────────────────────
 
 Route::prefix('freelance')
     ->middleware('auth:sanctum')
@@ -42,6 +83,8 @@ Route::prefix('freelance')
         Route::put('/profile', [FreelanceController::class, 'updateProfile']);
         Route::get('/dashboard', [FreelanceController::class, 'dashboard']);
     });
+
+// ─── Admin Routes ─────────────────────────────────────────────────────
 
 Route::prefix('admin')
     ->middleware(['auth:sanctum', 'admin'])
