@@ -23,7 +23,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - freelancescope
+      - shared_net
   nginx:
     image: nginx:alpine
     container_name: freelancescope-nginx
@@ -35,7 +35,7 @@ services:
     depends_on:
       - app
     networks:
-      - freelancescope
+      - shared_net
 
   queue:
     build:
@@ -56,7 +56,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - freelancescope
+      - shared_net
 
   db:
     image: mysql:8.4
@@ -75,11 +75,11 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - freelancescope
+      - shared_net
 
 networks:
-  freelancescope:
-    driver: bridge
+  shared_net:
+    external: true
 
 volumes:
   db_data:
