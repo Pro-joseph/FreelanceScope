@@ -93,6 +93,26 @@ class AdminController extends Controller
     }
 
     /**
+     * Afficher un freelance
+     *
+     * Retourne les détails d'un freelance spécifique.
+     *
+     * @authenticated
+     *
+     * @urlParam user integer required L'ID du freelance. Example: 2
+     *
+     * @response 200 { "id": 2, "nom": "Jane", "prenom": "Doe", "email": "jane@example.com", "telephone": "+212600000001", "statut": "actif", "taux_horaire": 75 }
+     */
+    public function showFreelance(User $user): JsonResponse
+    {
+        $this->authorize('view', $user);
+
+        return response()->json($user->only(
+            'id', 'nom', 'prenom', 'email', 'telephone', 'statut', 'taux_horaire'
+        ));
+    }
+
+    /**
      * Modifier un freelance
      *
      * Met à jour les informations d'un freelance existant.
