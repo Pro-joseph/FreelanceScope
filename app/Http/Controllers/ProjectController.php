@@ -39,6 +39,7 @@ class ProjectController extends Controller
         $clientIds = Client::where('user_id', auth()->id())->pluck('id');
 
         return Project::whereIn('client_id', $clientIds)
+            ->with('client')
             ->withCount('features')
             ->latest()
             ->paginate(15);
@@ -87,6 +88,7 @@ class ProjectController extends Controller
     {
         $this->authorize('view', $project);
 
+        $project->load(['client', 'features.estimate']);
         $project->loadCount('features');
 
         return $project;
