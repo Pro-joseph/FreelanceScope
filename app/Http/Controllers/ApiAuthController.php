@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -54,6 +55,8 @@ class ApiAuthController extends Controller
             'role' => $request->input('role', 'freelance'),
         ]);
 
+        Auth::login($user);
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
@@ -100,6 +103,8 @@ class ApiAuthController extends Controller
             ]);
         }
 
+        Auth::login($user);
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
@@ -126,7 +131,15 @@ class ApiAuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        if ($token = $request->user()->currentAccessToken()) {
+            $token->delete();
+        }
+
+        if ($request->hasSession()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return response()->json(['message' => 'Déconnecté.']);
     }
