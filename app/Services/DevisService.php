@@ -90,15 +90,4 @@ class DevisService
         return file_exists($fullPath) ? $fullPath : null;
     }
 
-    public function update(Devis $devis, array $data): Devis
-    {
-        $devis->update($data);
-
-        return $devis;
-    }
-
-    public function delete(Devis $devis): void
-    {
-        $devis->delete();
-    }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatut;
-use App\Http\Requests\StoreFreelanceRequest;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Project;
@@ -12,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 
 /**
  * @group Admin
@@ -77,15 +77,24 @@ class AdminController extends Controller
      *
      * @response 201 { "id": 3, "nom": "Doe", "prenom": "Jane", "email": "jane@example.com", "role": "freelance", ... }
      */
-    public function storeFreelance(StoreFreelanceRequest $request): JsonResponse
+    public function storeFreelance(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', Rules\Password::defaults()],
+            'telephone' => ['nullable', 'string', 'max:20'],
+            'taux_horaire' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
         $user = User::create([
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'email' => $request->email,
-            'password' => Hash::make($request->string('password')),
-            'telephone' => $request->telephone,
-            'taux_horaire' => $request->taux_horaire,
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'telephone' => $validated['telephone'] ?? null,
+            'taux_horaire' => $validated['taux_horaire'] ?? null,
             'role' => UserRole::Freelance,
         ]);
 

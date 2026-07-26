@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreDevisRequest;
-use App\Http\Requests\UpdateDevisRequest;
 use App\Http\Resources\DevisResource;
 use App\Models\Devis;
 use App\Services\DevisService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Request;
 
 /**
  * @group Devis
@@ -42,13 +40,11 @@ class DevisController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function index(): AnonymousResourceCollection
+    public function index(): JsonResponse
     {
-        $this->authorize('viewAny', Devis::class);
-
         $devis = $this->devisService->listForUser(auth()->id());
 
-        return DevisResource::collection($devis);
+        return response()->json(['data' => DevisResource::collection($devis)]);
     }
 
     /**
@@ -67,14 +63,18 @@ class DevisController extends Controller
      *   "data": { "id": 1, "total_amount": 3200, "status": "draft", ... }
      * }
      */
-    public function store(StoreDevisRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $this->authorize('create', Devis::class);
+        $validated = $request->validate([
+            'client_id' => ['required', 'integer', 'exists:clients,id'],
+            'project_id' => ['required', 'integer', 'exists:projects,id'],
+            'conditions' => ['nullable', 'string', 'max:2000'],
+        ]);
 
         $devis = $this->devisService->generate(
-            $request->integer('client_id'),
-            $request->integer('project_id'),
-            $request->input('conditions'),
+            $validated['client_id'],
+            $validated['project_id'],
+            $validated['conditions'] ?? null,
         );
 
         return response()->json(new DevisResource($devis), 201);
@@ -127,11 +127,16 @@ class DevisController extends Controller
      *   "data": { "id": 1, "status": "sent", "conditions": "Paiement comptant", ... }
      * }
      */
-    public function update(UpdateDevisRequest $request, Devis $devis): DevisResource
+    public function update(Request $request, Devis $devis): DevisResource
     {
         $this->authorize('update', $devis);
 
-        $devis = $this->devisService->update($devis, $request->validated());
+        $validated = $request->validate([
+            'conditions' => ['nullable', 'string', 'max:2000'],
+            'status' => ['sometimes', 'string', 'in:draft,sent,accepted,refused'],
+        ]);
+
+        $devis = $this->devisService->update($devis, $validated);
 
         return new DevisResource($devis);
     }
@@ -151,7 +156,7 @@ class DevisController extends Controller
     {
         $this->authorize('delete', $devis);
 
-        $this->devisService->delete($devis);
+        $devis->delete();
 
         return response()->json(null, 204);
     }

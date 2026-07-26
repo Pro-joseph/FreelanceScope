@@ -128,7 +128,7 @@ endpoints:
         status: 201
         content: |-
           {
-            "data": { "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", ... }
+            "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", ...
           }
         headers: []
         description: ''
@@ -167,7 +167,7 @@ endpoints:
         name: id
         description: 'The ID of the project.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -185,7 +185,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      id: 1
+      id: 16
       project: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -198,7 +198,7 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": { "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", "features_count": 5, ... }
+            "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", "features_count": 5, ...
           }
         headers: []
         description: ''
@@ -238,7 +238,7 @@ endpoints:
         name: id
         description: 'The ID of the project.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -256,22 +256,11 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      id: 1
+      id: 16
       project: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      client_id:
-        custom: []
-        name: client_id
-        description: 'Must match an existing stored value.'
-        required: false
-        example: 16
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       name:
         custom: []
         name: name
@@ -306,7 +295,6 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      client_id: 16
       name: 'Site e-commerce v2'
       description: 'Eius et animi quos velit et.'
       status: in_progress
@@ -317,7 +305,7 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": { "id": 1, "name": "Site e-commerce v2", "status": "in_progress", ... }
+            "id": 1, "name": "Site e-commerce v2", "status": "in_progress", ...
           }
         headers: []
         description: ''
@@ -356,7 +344,7 @@ endpoints:
         name: id
         description: 'The ID of the project.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -374,7 +362,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      id: 1
+      id: 16
       project: 1
     queryParameters: []
     cleanQueryParameters: []

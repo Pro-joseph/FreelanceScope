@@ -1,25 +1,23 @@
-name: Devis
+name: 'Freelance Profile'
 description: |-
 
-  Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-  Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+  Consultation et mise à jour du profil du freelance connecté, ainsi que son tableau de bord.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/devis
+    uri: api/dashboard/stats
     metadata:
       custom: []
-      groupName: Devis
+      groupName: 'Freelance Profile'
       groupDescription: |-
 
-        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+        Consultation et mise à jour du profil du freelance connecté, ainsi que son tableau de bord.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Liste des devis'
-      description: "Retourne la liste paginée des devis de l'utilisateur connecté."
+      title: 'Tableau de bord du freelance'
+      description: 'Retourne les statistiques globales du freelance connecté.'
       authenticated: true
       deprecated: false
     headers:
@@ -39,101 +37,7 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [
-              {
-                "id": 1,
-                "client": { "company_name": "Acme Corp", "email": "contact@acme.com", "phone": "+212600000000" },
-                "project": { "name": "Site e-commerce", "description": "..." },
-                "features": null, "total_amount": 3200, "conditions": null,
-                "status": "draft", "pdf_path": null, "created_at": "..."
-              }
-            ],
-            "meta": { "current_page": 1, "per_page": 15, "total": 1 }
-          }
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 1|scribe-test-token'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/devis
-    metadata:
-      custom: []
-      groupName: Devis
-      groupDescription: |-
-
-        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Créer un devis'
-      description: |-
-        Génère un nouveau devis à partir d'un client et d'un projet existants.
-        Le montant total est calculé automatiquement à partir des estimations des fonctionnalités.
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      client_id:
-        custom: []
-        name: client_id
-        description: "L'ID du client (appartenant à l'utilisateur)."
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      project_id:
-        custom: []
-        name: project_id
-        description: "L'ID du projet."
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      conditions:
-        custom: []
-        name: conditions
-        description: 'Les conditions de paiement.'
-        required: false
-        example: 'Paiement : 50% à la commande, 50% à la livraison'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      client_id: 1
-      project_id: 1
-      conditions: 'Paiement : 50% à la commande, 50% à la livraison'
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 201
-        content: |-
-          {
-            "data": { "id": 1, "total_amount": 3200, "status": "draft", ... }
+            "clients_count": 5, "projects_count": 12, "devis_count": 3
           }
         headers: []
         description: ''
@@ -149,50 +53,25 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: 'api/devis/{id}'
+    uri: api/freelance/profile
     metadata:
       custom: []
-      groupName: Devis
+      groupName: 'Freelance Profile'
       groupDescription: |-
 
-        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+        Consultation et mise à jour du profil du freelance connecté, ainsi que son tableau de bord.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Afficher un devis'
-      description: "Retourne les détails complets d'un devis, y compris les fonctionnalités et leurs estimations."
+      title: 'Profil du freelance'
+      description: "Retourne les informations du profil de l'utilisateur connecté."
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the devi.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      devis:
-        custom: []
-        name: devis
-        description: "L'ID du devis."
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 1
-      devis: 1
+    urlParameters: []
+    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -204,16 +83,8 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": {
-              "id": 1,
-              "client": { "company_name": "Acme Corp", "email": "...", "phone": "..." },
-              "project": { "name": "Site e-commerce", "description": "..." },
-              "features": [
-                { "name": "Page d'accueil", "complexity": "moyen", "hourly_rate": 50, "total_hours": 16, "total_amount": 800 }
-              ],
-              "total_amount": 3200, "conditions": "Paiement : 50% à la commande...",
-              "status": "draft", "pdf_path": null, "created_at": "..."
-            }
+            "id": 1, "nom": "Doe", "prenom": "John", "email": "john@example.com",
+            "telephone": "+212600000000", "taux_horaire": 50, "statut": "actif"
           }
         headers: []
         description: ''
@@ -229,91 +100,89 @@ endpoints:
     custom: []
     httpMethods:
       - PUT
-      - PATCH
-    uri: 'api/devis/{id}'
+    uri: api/freelance/profile
     metadata:
       custom: []
-      groupName: Devis
+      groupName: 'Freelance Profile'
       groupDescription: |-
 
-        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+        Consultation et mise à jour du profil du freelance connecté, ainsi que son tableau de bord.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Modifier un devis'
-      description: "Met à jour le statut ou les conditions d'un devis."
+      title: 'Mettre à jour le profil'
+      description: "Met à jour les informations du profil de l'utilisateur connecté. Tous les champs sont optionnels."
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the devi.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      devis:
-        custom: []
-        name: devis
-        description: "L'ID du devis."
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 1
-      devis: 1
+    urlParameters: []
+    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      conditions:
+      nom:
         custom: []
-        name: conditions
-        description: 'Les conditions de paiement.'
+        name: nom
+        description: 'Le nom de famille.'
         required: false
-        example: 'Paiement comptant'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-      total_amount:
-        custom: []
-        name: total_amount
-        description: 'Must be at least 0.'
-        required: false
-        example: 39
-        type: number
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: true
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'Le statut. Possibilités : `draft`, `sent`, `accepted`, `refused`.'
-        required: false
-        example: sent
+        example: Dupont
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      prenom:
+        custom: []
+        name: prenom
+        description: 'Le prénom.'
+        required: false
+        example: Jean
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: "L'adresse email."
+        required: false
+        example: jean@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      telephone:
+        custom: []
+        name: telephone
+        description: 'Le numéro de téléphone.'
+        required: false
+        example: '+212600000000'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      taux_horaire:
+        custom: []
+        name: taux_horaire
+        description: 'Le taux horaire en DH.'
+        required: false
+        example: '65'
+        type: numeric
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
-      conditions: 'Paiement comptant'
-      total_amount: 39
-      status: sent
+      nom: Dupont
+      prenom: Jean
+      email: jean@example.com
+      telephone: '+212600000000'
+      taux_horaire: '65'
     fileParameters: []
     responses:
       -
@@ -321,146 +190,9 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": { "id": 1, "status": "sent", "conditions": "Paiement comptant", ... }
+            "id": 1, "nom": "Dupont", "prenom": "Jean", "email": "jean@example.com",
+            "telephone": "+212600000000", "taux_horaire": 65, "statut": "actif"
           }
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 1|scribe-test-token'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/devis/{id}'
-    metadata:
-      custom: []
-      groupName: Devis
-      groupDescription: |-
-
-        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Supprimer un devis'
-      description: "Supprime un devis et son fichier PDF associé (s'il existe)."
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      id:
-        custom: []
-        name: id
-        description: 'The ID of the devi.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      devis:
-        custom: []
-        name: devis
-        description: "L'ID du devis."
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      id: 1
-      devis: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 204
-        content: '{}'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 1|scribe-test-token'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/devis/{devis_id}/pdf'
-    metadata:
-      custom: []
-      groupName: Devis
-      groupDescription: |-
-
-        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
-        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
-      subgroup: ''
-      subgroupDescription: ''
-      title: "Télécharger le PDF d'un devis"
-      description: |-
-        Génère (si nécessaire) et télécharge le fichier PDF du devis.
-        Le PDF est mis en cache et regénéré automatiquement si le devis a été modifié.
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      devis_id:
-        custom: []
-        name: devis_id
-        description: 'The ID of the devis.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      devis:
-        custom: []
-        name: devis
-        description: "L'ID du devis."
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      devis_id: 1
-      devis: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '(binary PDF stream)'
         headers: []
         description: ''
     responseFields: []

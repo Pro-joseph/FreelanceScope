@@ -5,7 +5,6 @@ use App\Http\Controllers\AIController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DevisController;
-use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\FreelanceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectFeatureController;
@@ -55,8 +54,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/features/{feature}', [ProjectFeatureController::class, 'destroy']);
 
     // Estimates
-    Route::get('/features/{feature}/estimate', [EstimateController::class, 'show']);
-    Route::put('/estimates/{estimate}', [EstimateController::class, 'update']);
+    Route::get('/features/{feature}/estimate', [ProjectFeatureController::class, 'showEstimate']);
+    Route::put('/estimates/{estimate}', [ProjectFeatureController::class, 'updateEstimate']);
 
     // AI Estimation & Analyses
     Route::post('/projects/{project}/ai-estimate', AIController::class);
@@ -81,7 +80,6 @@ Route::prefix('freelance')
     ->group(function () {
         Route::get('/profile', [FreelanceController::class, 'profile']);
         Route::put('/profile', [FreelanceController::class, 'updateProfile']);
-        Route::get('/dashboard', [FreelanceController::class, 'dashboard']);
     });
 
 // ─── Admin Routes ─────────────────────────────────────────────────────

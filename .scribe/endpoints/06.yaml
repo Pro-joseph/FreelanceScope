@@ -1,29 +1,25 @@
-name: 'AI Estimation'
+name: Devis
 description: |-
 
-  Génération automatique d'estimations via intelligence artificielle (Groq API).
-  Le processus est asynchrone : un job est dispatché et les résultats sont disponibles
-  via les endpoints Features et Estimates après exécution du worker.
+  Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+  Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
 endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: 'api/projects/{project_id}/generate-estimate'
+      - GET
+    uri: 'api/projects/{project}/devis'
     metadata:
       custom: []
-      groupName: 'AI Estimation'
+      groupName: Devis
       groupDescription: |-
 
-        Génération automatique d'estimations via intelligence artificielle (Groq API).
-        Le processus est asynchrone : un job est dispatché et les résultats sont disponibles
-        via les endpoints Features et Estimates après exécution du worker.
+        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Générer une estimation par IA'
-      description: |-
-        Analyse le besoin client via l'IA et génère automatiquement les fonctionnalités et leurs estimations.
-        Nécessite que le worker queue soit actif : `php artisan queue:work`.
+      title: 'Liste des devis'
+      description: "Retourne la liste paginée des devis de l'utilisateur connecté."
       authenticated: true
       deprecated: false
     headers:
@@ -31,20 +27,106 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      project_id:
+      project:
         custom: []
-        name: project_id
-        description: 'The ID of the project.'
+        name: project
+        description: 'The project.'
         required: true
-        example: 1
+        example: 16
         type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+    cleanUrlParameters:
+      project: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 1,
+                "client": { "company_name": "Acme Corp", "email": "contact@acme.com", "phone": "+212600000000" },
+                "project": { "name": "Site e-commerce", "description": "..." },
+                "features": null, "total_amount": 3200, "conditions": null,
+                "status": "draft", "pdf_path": null, "created_at": "..."
+              }
+            ],
+            "meta": { "current_page": 1, "per_page": 15, "total": 1 }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/projects/{project}/devis'
+    metadata:
+      custom: []
+      groupName: Devis
+      groupDescription: |-
+
+        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Créer un devis'
+      description: |-
+        Génère un nouveau devis à partir d'un client et d'un projet existants.
+        Le montant total est calculé automatiquement à partir des estimations des fonctionnalités.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
       project:
         custom: []
         name: project
+        description: 'The project.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      project: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      client_id:
+        custom: []
+        name: client_id
+        description: "L'ID du client (appartenant à l'utilisateur)."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      project_id:
+        custom: []
+        name: project_id
         description: "L'ID du projet."
         required: true
         example: 1
@@ -53,34 +135,391 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-    cleanUrlParameters:
+      conditions:
+        custom: []
+        name: conditions
+        description: 'Les conditions de paiement.'
+        required: false
+        example: 'Paiement : 50% à la commande, 50% à la livraison'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      client_id: 1
       project_id: 1
-      project: 1
+      conditions: 'Paiement : 50% à la commande, 50% à la livraison'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "data": { "id": 1, "total_amount": 3200, "status": "draft", ... }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/projects/{project}/devis/{devis_id}'
+    metadata:
+      custom: []
+      groupName: Devis
+      groupDescription: |-
+
+        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Afficher un devis'
+      description: "Retourne les détails complets d'un devis, y compris les fonctionnalités et leurs estimations."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project:
+        custom: []
+        name: project
+        description: 'The project.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis_id:
+        custom: []
+        name: devis_id
+        description: 'The ID of the devis.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis:
+        custom: []
+        name: devis
+        description: "L'ID du devis."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      project: 16
+      devis_id: 16
+      devis: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "client": { "company_name": "Acme Corp", "email": "...", "phone": "..." },
+              "project": { "name": "Site e-commerce", "description": "..." },
+              "features": [
+                { "name": "Page d'accueil", "complexity": "moyen", "hourly_rate": 50, "total_hours": 16, "total_amount": 800 }
+              ],
+              "total_amount": 3200, "conditions": "Paiement : 50% à la commande...",
+              "status": "draft", "pdf_path": null, "created_at": "..."
+            }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/projects/{project}/devis/{devis_id}'
+    metadata:
+      custom: []
+      groupName: Devis
+      groupDescription: |-
+
+        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Modifier un devis'
+      description: "Met à jour le statut ou les conditions d'un devis."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project:
+        custom: []
+        name: project
+        description: 'The project.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis_id:
+        custom: []
+        name: devis_id
+        description: 'The ID of the devis.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis:
+        custom: []
+        name: devis
+        description: "L'ID du devis."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      project: 16
+      devis_id: 16
+      devis: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      prompt:
+      conditions:
         custom: []
-        name: prompt
-        description: 'La description détaillée du projet.'
-        required: true
-        example: 'Je veux un site e-commerce complet avec catalogue produits, panier, paiement Stripe, dashboard admin, et espace client.'
+        name: conditions
+        description: 'Les conditions de paiement.'
+        required: false
+        example: 'Paiement comptant'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: 'Le statut. Possibilités : `draft`, `sent`, `accepted`, `refused`.'
+        required: false
+        example: sent
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      prompt: 'Je veux un site e-commerce complet avec catalogue produits, panier, paiement Stripe, dashboard admin, et espace client.'
+      conditions: 'Paiement comptant'
+      status: sent
     fileParameters: []
     responses:
       -
         custom: []
-        status: 202
+        status: 200
         content: |-
           {
-            "message": "Estimation en cours de génération."
+            "data": { "id": 1, "status": "sent", "conditions": "Paiement comptant", ... }
           }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/projects/{project}/devis/{devis_id}'
+    metadata:
+      custom: []
+      groupName: Devis
+      groupDescription: |-
+
+        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Supprimer un devis'
+      description: "Supprime un devis et son fichier PDF associé (s'il existe)."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project:
+        custom: []
+        name: project
+        description: 'The project.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis_id:
+        custom: []
+        name: devis_id
+        description: 'The ID of the devis.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis:
+        custom: []
+        name: devis
+        description: "L'ID du devis."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      project: 16
+      devis_id: 16
+      devis: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 204
+        content: '{}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/projects/{project}/devis/{devis_id}/pdf'
+    metadata:
+      custom: []
+      groupName: Devis
+      groupDescription: |-
+
+        Génération et gestion des devis (documents PDF) à partir des estimations d'un projet.
+        Les devis sont basés sur les fonctionnalités d'un projet et leurs estimations de coûts.
+      subgroup: ''
+      subgroupDescription: ''
+      title: "Télécharger le PDF d'un devis"
+      description: |-
+        Génère (si nécessaire) et télécharge le fichier PDF du devis.
+        Le PDF est mis en cache et regénéré automatiquement si le devis a été modifié.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project:
+        custom: []
+        name: project
+        description: 'The project.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis_id:
+        custom: []
+        name: devis_id
+        description: 'The ID of the devis.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      devis:
+        custom: []
+        name: devis
+        description: "L'ID du devis."
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      project: 16
+      devis_id: 16
+      devis: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '(binary PDF stream)'
         headers: []
         description: ''
     responseFields: []

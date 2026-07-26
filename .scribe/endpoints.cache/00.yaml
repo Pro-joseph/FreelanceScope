@@ -10,7 +10,7 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/register
+    uri: api/auth/register
     metadata:
       custom: []
       groupName: Auth
@@ -118,7 +118,7 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/login
+    uri: api/auth/login
     metadata:
       custom: []
       groupName: Auth
@@ -200,7 +200,131 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/logout
+    uri: api/auth/forgot-password
+    metadata:
+      custom: []
+      groupName: Auth
+      groupDescription: |-
+
+        Inscription, connexion, déconnexion et récupération de l'utilisateur connecté.
+        Tous les endpoints retournent un token Sanctum à utiliser dans le header `Authorization: Bearer {token}`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: gbailey@example.net
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: gbailey@example.net
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/auth/reset-password
+    metadata:
+      custom: []
+      groupName: Auth
+      groupDescription: |-
+
+        Inscription, connexion, déconnexion et récupération de l'utilisateur connecté.
+        Tous les endpoints retournent un token Sanctum à utiliser dans le header `Authorization: Bearer {token}`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      token:
+        custom: []
+        name: token
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: zbailey@example.net
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: ''
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      token: architecto
+      email: zbailey@example.net
+      password: architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 1|scribe-test-token'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/auth/logout
     metadata:
       custom: []
       groupName: Auth
