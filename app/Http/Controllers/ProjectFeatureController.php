@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
  *
  * Gestion des fonctionnalités d'un projet. Les routes sont shallow : lister/créer sont sur `/projects/{project}/features`,
  * les actions individuelles sur `/features/{feature}`.
- *
  * @group Estimates
  *
  * Consultation et mise à jour des estimations de prix pour chaque fonctionnalité.
@@ -32,11 +31,13 @@ class ProjectFeatureController extends Controller
      *   { "id": 1, "project_id": 1, "name": "Page d'accueil", "description": "Page d'accueil avec présentation", "complexity": "moyen", "created_at": "..." }
      * ]
      */
-    public function index(Project $project): array
+    public function index(Project $project): JsonResponse
     {
         $this->authorize('view', $project);
 
-        return $project->features()->latest()->get()->toArray();
+        return response()->json([
+            'data' => $project->features()->latest()->get()->toArray(),
+        ]);
     }
 
     /**
@@ -65,7 +66,7 @@ class ProjectFeatureController extends Controller
 
         $feature = $project->features()->create($validated);
 
-        return response()->json($feature, 201);
+        return response()->json(['data' => $feature], 201);
     }
 
     /**
@@ -79,11 +80,11 @@ class ProjectFeatureController extends Controller
      *   "id": 1, "project_id": 1, "name": "Page d'accueil", "description": "...", "complexity": "moyen", "created_at": "..."
      * }
      */
-    public function show(ProjectFeature $feature): ProjectFeature
+    public function show(ProjectFeature $feature): JsonResponse
     {
         $this->authorize('view', $feature);
 
-        return $feature;
+        return response()->json(['data' => $feature]);
     }
 
     /**
@@ -101,7 +102,7 @@ class ProjectFeatureController extends Controller
      *   "id": 1, "name": "Page d'accueil v2", "complexity": "simple", ...
      * }
      */
-    public function update(Request $request, ProjectFeature $feature): ProjectFeature
+    public function update(Request $request, Project $project, ProjectFeature $feature): JsonResponse
     {
         $this->authorize('update', $feature);
 
@@ -113,7 +114,7 @@ class ProjectFeatureController extends Controller
 
         $feature->update($validated);
 
-        return $feature;
+        return response()->json(['data' => $feature]);
     }
 
     /**

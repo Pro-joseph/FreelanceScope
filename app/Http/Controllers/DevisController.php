@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\DevisResource;
 use App\Models\Devis;
+use App\Models\Project;
 use App\Services\DevisService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -63,17 +64,15 @@ class DevisController extends Controller
      *   "data": { "id": 1, "total_amount": 3200, "status": "draft", ... }
      * }
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, Project $project): JsonResponse
     {
         $validated = $request->validate([
-            'client_id' => ['required', 'integer', 'exists:clients,id'],
-            'project_id' => ['required', 'integer', 'exists:projects,id'],
             'conditions' => ['nullable', 'string', 'max:2000'],
         ]);
 
         $devis = $this->devisService->generate(
-            $validated['client_id'],
-            $validated['project_id'],
+            $project->client_id,
+            $project->id,
             $validated['conditions'] ?? null,
         );
 

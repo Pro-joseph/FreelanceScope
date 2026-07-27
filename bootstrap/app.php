@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => EnsureEmailIsVerified::class,
         ]);
 
-        //
+        $middleware->redirectGuestsTo(fn () => abort(401, 'Unauthenticated'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

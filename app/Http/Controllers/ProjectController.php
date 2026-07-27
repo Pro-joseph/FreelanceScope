@@ -7,7 +7,6 @@ use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Validation\Rules;
 
 /**
  * @group Projects
@@ -70,7 +69,7 @@ class ProjectController extends Controller
 
         $project = Project::create($validated);
 
-        return response()->json($project, 201);
+        return response()->json(['data' => $project], 201);
     }
 
     /**
@@ -84,14 +83,14 @@ class ProjectController extends Controller
      *   "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", "features_count": 5, ...
      * }
      */
-    public function show(Project $project): Project
+    public function show(Project $project): JsonResponse
     {
         $this->authorize('view', $project);
 
         $project->load(['client', 'features.estimate']);
         $project->loadCount('features');
 
-        return $project;
+        return response()->json(['data' => $project]);
     }
 
     /**
@@ -109,7 +108,7 @@ class ProjectController extends Controller
      *   "id": 1, "name": "Site e-commerce v2", "status": "in_progress", ...
      * }
      */
-    public function update(Request $request, Project $project): Project
+    public function update(Request $request, Project $project): JsonResponse
     {
         $this->authorize('update', $project);
 
@@ -121,7 +120,7 @@ class ProjectController extends Controller
 
         $project->update($validated);
 
-        return $project;
+        return response()->json(['data' => $project]);
     }
 
     /**
