@@ -68,7 +68,7 @@ class ClientController extends Controller
             ...$validated,
         ]);
 
-        return response()->json($client, 201);
+        return response()->json(['data' => $client], 201);
     }
 
     /**
@@ -91,7 +91,7 @@ class ClientController extends Controller
 
         $client->loadCount('projects');
 
-        return $client;
+        return response()->json(['data' => $client]);
     }
 
     /**
@@ -121,7 +121,7 @@ class ClientController extends Controller
 
         $client->update($validated);
 
-        return $client;
+        return response()->json(['data' => $client]);
     }
 
     /**

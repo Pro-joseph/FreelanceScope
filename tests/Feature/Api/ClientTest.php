@@ -26,7 +26,7 @@ it('can create a client', function () {
     ]);
 
     expect($response->status())->toBe(201);
-    expect($response->json('company_name'))->toBe('Acme Corp');
+    expect($response->json('data.company_name'))->toBe('Acme Corp');
 });
 
 it('can view a client', function () {

@@ -30,7 +30,7 @@ it('can create a project', function () {
     ]);
 
     expect($response->status())->toBe(201);
-    expect($response->json('name'))->toBe('Site e-commerce');
+    expect($response->json('data.name'))->toBe('Site e-commerce');
 });
 
 it('can view a project', function () {

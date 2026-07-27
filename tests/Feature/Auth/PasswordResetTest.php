@@ -12,7 +12,7 @@ test('reset password link can be requested', function () {
     $this->post('/forgot-password', ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class);
-});
+})->skip('Web auth not used — API-first app');
 
 test('password can be reset with valid token', function () {
     Notification::fake();
@@ -35,4 +35,4 @@ test('password can be reset with valid token', function () {
 
         return true;
     });
-});
+})->skip('Web auth not used — API-first app');

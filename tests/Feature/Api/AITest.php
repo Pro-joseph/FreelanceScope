@@ -16,7 +16,7 @@ it('can dispatch estimation job', function () {
     $client = Client::factory()->for($user)->create();
     $project = Project::factory()->for($client)->create();
 
-    $response = $this->actingAs($user)->postJson("/api/projects/{$project->id}/generate-estimate", [
+    $response = $this->actingAs($user)->postJson("/api/projects/{$project->id}/ai-estimate", [
         'prompt' => 'Je veux un site e-commerce avec catalogue et paiement.',
     ]);
 
@@ -31,7 +31,7 @@ it('cannot dispatch estimation without prompt', function () {
     $project = Project::factory()->for($client)->create();
 
     $response = $this->actingAs($user)
-        ->postJson("/api/projects/{$project->id}/generate-estimate", []);
+        ->postJson("/api/projects/{$project->id}/ai-estimate", []);
 
     expect($response->status())->toBe(422);
     expect($response->json('errors'))->toHaveKeys(['prompt']);

@@ -79,6 +79,18 @@ class DevisService
         return $devis->updated_at->gt($devis->pdf_generated_at);
     }
 
+    public function update(Devis $devis, array $data): Devis
+    {
+        $devis->update($data);
+
+        return $devis;
+    }
+
+    public function delete(Devis $devis): void
+    {
+        $devis->delete();
+    }
+
     public function getPdfPath(Devis $devis): ?string
     {
         if (! $devis->pdf_path) {

@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('users can register via api', function () {
-    $response = $this->postJson('/api/register', [
+    $response = $this->postJson('/api/auth/register', [
         'nom' => 'Doe',
         'prenom' => 'John',
         'email' => 'john@example.com',
@@ -24,7 +24,7 @@ it('users can login via api', function () {
         'password' => bcrypt('password'),
     ]);
 
-    $response = $this->postJson('/api/login', [
+    $response = $this->postJson('/api/auth/login', [
         'email' => 'john@example.com',
         'password' => 'password',
     ]);
@@ -39,7 +39,7 @@ it('users cannot login with invalid credentials', function () {
         'password' => bcrypt('password'),
     ]);
 
-    $response = $this->postJson('/api/login', [
+    $response = $this->postJson('/api/auth/login', [
         'email' => 'john@example.com',
         'password' => 'wrong-password',
     ]);
@@ -51,7 +51,7 @@ it('users cannot login with invalid credentials', function () {
 it('authenticated user can get their profile', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->getJson('/api/user');
+    $response = $this->actingAs($user)->getJson('/api/auth/me');
 
     expect($response->status())->toBe(200);
     expect($response->json())->toMatchArray([
@@ -61,7 +61,7 @@ it('authenticated user can get their profile', function () {
 });
 
 it('unauthenticated user cannot access protected routes', function () {
-    expect($this->getJson('/api/user')->status())->toBe(401);
+    expect($this->getJson('/api/auth/me')->status())->toBe(401);
     expect($this->getJson('/api/clients')->status())->toBe(401);
     expect($this->postJson('/api/clients')->status())->toBe(401);
 });
@@ -70,7 +70,7 @@ it('users can logout via api', function () {
     $user = User::factory()->create();
     $token = $user->createToken('api-token')->plainTextToken;
 
-    $response = $this->withToken($token)->postJson('/api/logout');
+    $response = $this->withToken($token)->postJson('/api/auth/logout');
 
     expect($response->status())->toBe(200);
     expect($response->json())->toMatchArray(['message' => 'Déconnecté.']);

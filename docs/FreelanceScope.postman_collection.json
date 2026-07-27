@@ -70,9 +70,9 @@
               "raw": "{\n  \"nom\": \"Doe\",\n  \"prenom\": \"John\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/register",
+              "raw": "{{base_url}}/auth/register",
               "host": ["{{base_url}}"],
-              "path": ["register"]
+              "path": ["auth", "register"]
             }
           }
         },
@@ -103,9 +103,9 @@
               "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/login",
+              "raw": "{{base_url}}/auth/login",
               "host": ["{{base_url}}"],
-              "path": ["login"]
+              "path": ["auth", "login"]
             }
           }
         },
@@ -117,9 +117,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/user",
+              "raw": "{{base_url}}/auth/me",
               "host": ["{{base_url}}"],
-              "path": ["user"]
+              "path": ["auth", "me"]
             }
           }
         },
@@ -131,9 +131,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/logout",
+              "raw": "{{base_url}}/auth/logout",
               "host": ["{{base_url}}"],
-              "path": ["logout"]
+              "path": ["auth", "logout"]
             }
           }
         }
@@ -183,9 +183,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/freelance/dashboard",
+              "raw": "{{base_url}}/dashboard/stats",
               "host": ["{{base_url}}"],
-              "path": ["freelance", "dashboard"]
+              "path": ["dashboard", "stats"]
             }
           }
         }
@@ -586,26 +586,26 @@
                   "raw": "{\n  \"name\": \"Page d'accueil v2\",\n  \"complexity\": \"simple\"\n}"
                 },
                 "url": {
-                  "raw": "{{base_url}}/features/{{feature_id}}",
-                  "host": ["{{base_url}}"],
-                  "path": ["features", "{{feature_id}}"]
-                }
-              }
-            },
-            {
-              "name": "Delete Feature",
-              "request": {
-                "method": "DELETE",
-                "header": [
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
-                ],
-                "url": {
-                  "raw": "{{base_url}}/features/{{feature_id}}",
-                  "host": ["{{base_url}}"],
-                  "path": ["features", "{{feature_id}}"]
-                }
-              }
+              "raw": "{{base_url}}/projects/{{project_id}}/features/{{feature_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["projects", "{{project_id}}", "features", "{{feature_id}}"]
             }
+          }
+        },
+        {
+          "name": "Delete Feature",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/features/{{feature_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["features", "{{feature_id}}"]
+            }
+          }
+        }
           ]
         },
         {
@@ -674,9 +674,9 @@
               "raw": "{\n  \"prompt\": \"Je veux un site e-commerce complet avec catalogue produits, panier, paiement Stripe, dashboard admin, et espace client. Le site doit \\u00eatre responsive et optimis\\u00e9 SEO.\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/projects/{{project_id}}/generate-estimate",
+              "raw": "{{base_url}}/projects/{{project_id}}/ai-estimate",
               "host": ["{{base_url}}"],
-              "path": ["projects", "{{project_id}}", "generate-estimate"]
+              "path": ["projects", "{{project_id}}", "ai-estimate"]
             }
           }
         }
@@ -693,9 +693,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/devis",
+              "raw": "{{base_url}}/projects/{{project_id}}/devis",
               "host": ["{{base_url}}"],
-              "path": ["devis"]
+              "path": ["projects", "{{project_id}}", "devis"]
             }
           }
         },
@@ -724,12 +724,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"client_id\": {{client_id}},\n  \"project_id\": {{project_id}},\n  \"conditions\": \"Paiement : 50% \\u00e0 la commande, 50% \\u00e0 la livraison\"\n}"
+              "raw": "{\n  \"conditions\": \"Paiement : 50% \\u00e0 la commande, 50% \\u00e0 la livraison\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/devis",
+              "raw": "{{base_url}}/projects/{{project_id}}/devis",
               "host": ["{{base_url}}"],
-              "path": ["devis"]
+              "path": ["projects", "{{project_id}}", "devis"]
             }
           }
         },
@@ -741,9 +741,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/devis/{{devis_id}}",
+              "raw": "{{base_url}}/projects/{{project_id}}/devis/{{devis_id}}",
               "host": ["{{base_url}}"],
-              "path": ["devis", "{{devis_id}}"]
+              "path": ["projects", "{{project_id}}", "devis", "{{devis_id}}"]
             }
           }
         },
@@ -760,9 +760,9 @@
               "raw": "{\n  \"status\": \"sent\",\n  \"conditions\": \"Paiement comptant\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/devis/{{devis_id}}",
+              "raw": "{{base_url}}/projects/{{project_id}}/devis/{{devis_id}}",
               "host": ["{{base_url}}"],
-              "path": ["devis", "{{devis_id}}"]
+              "path": ["projects", "{{project_id}}", "devis", "{{devis_id}}"]
             }
           }
         },
@@ -774,9 +774,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/devis/{{devis_id}}/pdf",
+              "raw": "{{base_url}}/projects/{{project_id}}/devis/{{devis_id}}/pdf",
               "host": ["{{base_url}}"],
-              "path": ["devis", "{{devis_id}}", "pdf"]
+              "path": ["projects", "{{project_id}}", "devis", "{{devis_id}}", "pdf"]
             }
           }
         },
@@ -788,9 +788,9 @@
               { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{base_url}}/devis/{{devis_id}}",
+              "raw": "{{base_url}}/projects/{{project_id}}/devis/{{devis_id}}",
               "host": ["{{base_url}}"],
-              "path": ["devis", "{{devis_id}}"]
+              "path": ["projects", "{{project_id}}", "devis", "{{devis_id}}"]
             }
           }
         }
