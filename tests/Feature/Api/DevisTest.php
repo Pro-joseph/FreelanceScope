@@ -28,7 +28,7 @@ it('can list devis', function () {
     $response = $this->actingAs($user)->getJson("/api/projects/{$project->id}/devis");
 
     expect($response->status())->toBe(200);
-    expect($response->json())->toHaveKeys(['data', 'meta']);
+    expect($response->json())->toHaveKey('data');
     expect($response->json('data'))->toHaveCount(1);
 });
 

@@ -15,8 +15,9 @@ it('can list projects', function () {
     $response = $this->actingAs($user)->getJson('/api/projects');
 
     expect($response->status())->toBe(200);
-    expect($response->json())->toHaveKeys(['data', 'meta']);
+    expect($response->json())->toHaveKey('data');
     expect($response->json('data'))->toHaveCount(2);
+    expect($response->json('total'))->toBe(2);
 });
 
 it('can create a project', function () {
