@@ -12,16 +12,16 @@ class DevisResource extends JsonResource
         return [
             'id' => $this->id,
             'client' => [
-                'company_name' => $this->client->company_name,
-                'email' => $this->client->email,
-                'phone' => $this->client->phone,
+                'company_name' => $this->client?->company_name,
+                'email' => $this->client?->email,
+                'phone' => $this->client?->phone,
             ],
             'project' => [
-                'name' => $this->project->name,
-                'description' => $this->project->description,
+                'name' => $this->project?->name,
+                'description' => $this->project?->description,
             ],
             'features' => $this->when(
-                $this->relationLoaded('project') && $this->project->relationLoaded('features'),
+                $this->relationLoaded('project') && $this->project?->relationLoaded('features'),
                 fn () => $this->project->features->map(fn ($feature) => [
                     'name' => $feature->name,
                     'description' => $feature->description,

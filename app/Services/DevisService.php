@@ -49,7 +49,13 @@ class DevisService
         $filename = "devis_{$devis->id}.pdf";
 
         $devis->load(['client', 'project.features.estimate']);
-        $user = $devis->client->user;
+
+        $client = $devis->client;
+        if (! $client) {
+            throw new \RuntimeException('Cannot generate PDF: devis #'.$devis->id.' has no associated client.');
+        }
+
+        $user = $client->user;
 
         $pdf = Pdf::loadView('pdf.devis', [
             'devis' => $devis,
