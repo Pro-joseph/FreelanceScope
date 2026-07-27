@@ -101,7 +101,7 @@ class DevisController extends Controller
      *   }
      * }
      */
-    public function show(Devis $devis): DevisResource
+    public function show(Project $project, Devis $devis): DevisResource
     {
         $this->authorize('view', $devis);
 
@@ -126,7 +126,7 @@ class DevisController extends Controller
      *   "data": { "id": 1, "status": "sent", "conditions": "Paiement comptant", ... }
      * }
      */
-    public function update(Request $request, Devis $devis): DevisResource
+    public function update(Request $request, Project $project, Devis $devis): DevisResource
     {
         $this->authorize('update', $devis);
 
@@ -151,7 +151,7 @@ class DevisController extends Controller
      *
      * @response 204
      */
-    public function destroy(Devis $devis): JsonResponse
+    public function destroy(Project $project, Devis $devis): JsonResponse
     {
         $this->authorize('delete', $devis);
 
@@ -172,7 +172,7 @@ class DevisController extends Controller
      *
      * @response 200 (binary PDF stream)
      */
-    public function download(Devis $devis)
+    public function download(Project $project, Devis $devis)
     {
         $this->authorize('view', $devis);
 
