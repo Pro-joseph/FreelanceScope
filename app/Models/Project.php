@@ -41,4 +41,9 @@ class Project extends Model
     {
         return $this->hasMany(AiAnalysis::class);
     }
+
+    public function devis(): HasMany
+    {
+        return $this->hasMany(Devis::class);
+    }
 }

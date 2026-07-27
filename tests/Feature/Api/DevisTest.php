@@ -6,6 +6,7 @@ use App\Models\Estimate;
 use App\Models\Project;
 use App\Models\ProjectFeature;
 use App\Models\User;
+use App\Services\DevisService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -63,7 +64,7 @@ it('can generate and view a devis', function () {
         'total_amount' => 800,
     ]);
 
-    $service = app(App\Services\DevisService::class);
+    $service = app(DevisService::class);
     $devis = $service->generate($client->id, $project->id, '50% à la commande');
 
     expect($devis->id)->not->toBeNull();
@@ -85,7 +86,7 @@ it('can update a devis status', function () {
         'total_amount' => 500,
     ]);
 
-    $service = app(App\Services\DevisService::class);
+    $service = app(DevisService::class);
     $devis = $service->generate($client->id, $project->id, null);
 
     $service->update($devis, ['status' => 'sent']);
@@ -104,7 +105,7 @@ it('can delete a devis', function () {
         'total_amount' => 500,
     ]);
 
-    $service = app(App\Services\DevisService::class);
+    $service = app(DevisService::class);
     $devis = $service->generate($client->id, $project->id, null);
 
     $service->delete($devis);

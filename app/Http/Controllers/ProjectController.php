@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectRequest;
-use App\Http\Resources\ProjectResource;
+use App\Models\Client;
 use App\Models\Project;
-use App\Services\ProjectService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @group Projects
@@ -17,10 +15,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 class ProjectController extends Controller
 {
-    public function __construct(
-        private readonly ProjectService $projectService,
-    ) {}
-
     /**
      * Liste des projets
      *
@@ -39,13 +33,15 @@ class ProjectController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function index(): AnonymousResourceCollection
+    public function index(): LengthAwarePaginator
     {
-        $this->authorize('viewAny', Project::class);
+        $clientIds = Client::where('user_id', auth()->id())->pluck('id');
 
-        $projects = $this->projectService->listForUser(auth()->id());
-
-        return ProjectResource::collection($projects);
+        return Project::whereIn('client_id', $clientIds)
+            ->with('client')
+            ->withCount('features')
+            ->latest()
+            ->paginate(15);
     }
 
     /**
@@ -60,19 +56,20 @@ class ProjectController extends Controller
      * @bodyParam description string La description du projet. Example: Site de vente en ligne avec catalogue et paiement
      *
      * @response 201 {
-     *   "data": { "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", ... }
+     *   "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", ...
      * }
      */
-    public function store(StoreProjectRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $this->authorize('create', Project::class);
+        $validated = $request->validate([
+            'client_id' => ['required', 'exists:clients,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+        ]);
 
-        $project = $this->projectService->createForUser(
-            auth()->id(),
-            $request->validated(),
-        );
+        $project = Project::create($validated);
 
-        return response()->json(new ProjectResource($project), 201);
+        return response()->json(['data' => $project], 201);
     }
 
     /**
@@ -83,16 +80,17 @@ class ProjectController extends Controller
      * @urlParam project integer required L'ID du projet. Example: 1
      *
      * @response 200 {
-     *   "data": { "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", "features_count": 5, ... }
+     *   "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", "features_count": 5, ...
      * }
      */
-    public function show(Project $project): ProjectResource
+    public function show(Project $project): JsonResponse
     {
         $this->authorize('view', $project);
 
+        $project->load(['client', 'features.estimate']);
         $project->loadCount('features');
 
-        return new ProjectResource($project);
+        return response()->json(['data' => $project]);
     }
 
     /**
@@ -101,21 +99,28 @@ class ProjectController extends Controller
      * @authenticated
      *
      * @urlParam project integer required L'ID du projet. Example: 1
+     *
      * @bodyParam name string Le nom du projet. Example: Site e-commerce v2
      * @bodyParam description string La description du projet.
      * @bodyParam status string Le statut. Possibilités : `draft`, `in_progress`, `completed`, `cancelled`. Example: in_progress
      *
      * @response 200 {
-     *   "data": { "id": 1, "name": "Site e-commerce v2", "status": "in_progress", ... }
+     *   "id": 1, "name": "Site e-commerce v2", "status": "in_progress", ...
      * }
      */
-    public function update(UpdateProjectRequest $request, Project $project): ProjectResource
+    public function update(Request $request, Project $project): JsonResponse
     {
         $this->authorize('update', $project);
 
-        $project = $this->projectService->update($project, $request->validated());
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'status' => ['sometimes', 'string', 'in:draft,in_progress,completed,cancelled'],
+        ]);
 
-        return new ProjectResource($project);
+        $project->update($validated);
+
+        return response()->json(['data' => $project]);
     }
 
     /**
@@ -131,7 +136,7 @@ class ProjectController extends Controller
     {
         $this->authorize('delete', $project);
 
-        $this->projectService->delete($project);
+        $project->delete();
 
         return response()->json(null, 204);
     }

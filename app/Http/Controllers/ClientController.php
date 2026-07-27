@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
-use App\Http\Resources\ClientResource;
 use App\Models\Client;
-use App\Services\ClientService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @group Clients
@@ -17,10 +14,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  */
 class ClientController extends Controller
 {
-    public function __construct(
-        private readonly ClientService $clientService,
-    ) {}
-
     /**
      * Liste des clients
      *
@@ -38,13 +31,12 @@ class ClientController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function index(): AnonymousResourceCollection
+    public function index(): LengthAwarePaginator
     {
-        $this->authorize('viewAny', Client::class);
-
-        $clients = $this->clientService->listForUser(auth()->id());
-
-        return ClientResource::collection($clients);
+        return Client::where('user_id', auth()->id())
+            ->withCount('projects')
+            ->latest()
+            ->paginate(15);
     }
 
     /**
@@ -59,22 +51,24 @@ class ClientController extends Controller
      * @bodyParam phone string Le numéro de téléphone. Example: +212600000000
      *
      * @response 201 {
-     *   "data": {
-     *     "id": 1, "company_name": "Acme Corp", "email": "contact@acme.com",
-     *     "phone": "+212600000000", "projects_count": 0, "created_at": "..."
-     *   }
+     *   "id": 1, "company_name": "Acme Corp", "email": "contact@acme.com",
+     *   "phone": "+212600000000", "projects_count": 0, "created_at": "..."
      * }
      */
-    public function store(StoreClientRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $this->authorize('create', Client::class);
+        $validated = $request->validate([
+            'company_name' => ['required', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+        ]);
 
-        $client = $this->clientService->createForUser(
-            auth()->id(),
-            $request->validated(),
-        );
+        $client = Client::create([
+            'user_id' => auth()->id(),
+            ...$validated,
+        ]);
 
-        return response()->json(new ClientResource($client), 201);
+        return response()->json($client, 201);
     }
 
     /**
@@ -87,19 +81,17 @@ class ClientController extends Controller
      * @urlParam client integer required L'ID du client. Example: 1
      *
      * @response 200 {
-     *   "data": {
-     *     "id": 1, "company_name": "Acme Corp", "email": "contact@acme.com",
-     *     "phone": "+212600000000", "projects_count": 3, "created_at": "..."
-     *   }
+     *   "id": 1, "company_name": "Acme Corp", "email": "contact@acme.com",
+     *   "phone": "+212600000000", "projects_count": 3, "created_at": "..."
      * }
      */
-    public function show(Client $client): ClientResource
+    public function show(Client $client): Client
     {
         $this->authorize('view', $client);
 
         $client->loadCount('projects');
 
-        return new ClientResource($client);
+        return $client;
     }
 
     /**
@@ -108,21 +100,28 @@ class ClientController extends Controller
      * @authenticated
      *
      * @urlParam client integer required L'ID du client. Example: 1
+     *
      * @bodyParam company_name string Le nom de l'entreprise. Example: Acme Corp Updated
      * @bodyParam email string L'email du client. Example: new@acme.com
      * @bodyParam phone string Le numéro de téléphone. Example: +212600000001
      *
      * @response 200 {
-     *   "data": { "id": 1, "company_name": "Acme Corp Updated", ... }
+     *   "id": 1, "company_name": "Acme Corp Updated", ...
      * }
      */
-    public function update(UpdateClientRequest $request, Client $client): ClientResource
+    public function update(Request $request, Client $client): Client
     {
         $this->authorize('update', $client);
 
-        $client = $this->clientService->update($client, $request->validated());
+        $validated = $request->validate([
+            'company_name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+        ]);
 
-        return new ClientResource($client);
+        $client->update($validated);
+
+        return $client;
     }
 
     /**
@@ -138,7 +137,7 @@ class ClientController extends Controller
     {
         $this->authorize('delete', $client);
 
-        $this->clientService->delete($client);
+        $client->delete();
 
         return response()->json(null, 204);
     }

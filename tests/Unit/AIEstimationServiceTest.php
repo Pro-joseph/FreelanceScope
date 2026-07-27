@@ -46,7 +46,7 @@ it('strips markdown fences from AI response', function () {
         'missing_info' => [],
         'scope_creep_risks' => [],
     ];
-    $markdownWrapped = "```json\n" . json_encode($data) . "\n```";
+    $markdownWrapped = "```json\n".json_encode($data)."\n```";
 
     $chat = Mockery::mock('OpenAI\Contracts\Resources\Chat');
     $chat->shouldReceive('create')->once()->andReturn((object) [
