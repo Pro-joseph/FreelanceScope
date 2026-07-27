@@ -1,58 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FreelanceScope — Laravel API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend API pour la gestion de freelance : clients, projets, fonctionnalités, estimation IA (Groq), devis PDF.
 
-## About Laravel
+**Stack :** Laravel 13 · PHP 8.4 · Sanctum · MySQL · Docker
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Démarrage rapide (Docker)
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+docker-compose up -d
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+L'API est servie sur `http://localhost:80/api`.
 
-## Contributing
+Configuration :
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- `APP_URL=http://localhost:80`
+- `FRONTEND_URL=http://localhost:4000` (Angular)
+- `DB_HOST=db`, `DB_DATABASE=freelancescope`
+- `QUEUE_CONNECTION=redis`
 
-## Code of Conduct
+Lancer le worker pour les jobs IA asynchrones :
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+docker exec freelancescope-app php artisan queue:work
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Installation locale (sans Docker)
 
-## License
+```bash
+cp .env.example .env
+# configurer DB_HOST=127.0.0.1, DB_DATABASE=...
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan serve --port=8000
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Structure API
+
+Toutes les routes sont préfixées par `/api`.
+
+### Auth
+
+| Méthode | URL | Description |
+|---------|-----|-------------|
+| POST | `/api/auth/register` | Inscription |
+| POST | `/api/auth/login` | Connexion |
+| POST | `/api/auth/forgot-password` | Mot de passe oublié |
+| POST | `/api/auth/reset-password` | Réinitialisation |
+| GET | `/api/auth/me` | Profil connecté |
+| POST | `/api/auth/logout` | Déconnexion |
+
+### Ressources
+
+| Méthode | URL | Description |
+|---------|-----|-------------|
+| GET/POST | `/api/clients` | Lister / Créer |
+| GET/PUT/DELETE | `/api/clients/{client}` | Voir / Modifier / Supprimer |
+| GET/POST | `/api/projects` | Lister / Créer |
+| GET/PUT/DELETE | `/api/projects/{project}` | Voir / Modifier / Supprimer |
+| GET/POST | `/api/projects/{project}/features` | Fonctionnalités lister / créer |
+| GET/PUT/DELETE | `/api/features/{feature}` | Voir / Modifier / Supprimer |
+| GET | `/api/features/{feature}/estimate` | Estimation d'une fonctionnalité |
+| PUT | `/api/estimates/{estimate}` | Modifier une estimation |
+| GET/POST | `/api/projects/{project}/devis` | Devis lister / créer |
+| GET/PUT/DELETE | `/api/projects/{project}/devis/{devis}` | Voir / Modifier / Supprimer |
+| GET | `/api/projects/{project}/devis/{devis}/pdf` | Télécharger PDF |
+
+### IA
+
+| Méthode | URL | Description |
+|---------|-----|-------------|
+| POST | `/api/projects/{project}/ai-estimate` | Lancer estimation IA (asynchrone) |
+| GET | `/api/projects/{project}/ai-analyses` | Historique des analyses |
+
+### Dashboard & Profil
+
+| Méthode | URL | Description |
+|---------|-----|-------------|
+| GET | `/api/dashboard/stats` | Stats du freelance connecté |
+| GET/PUT | `/api/freelance/profile` | Profil freelance |
+
+### Admin
+
+| Méthode | URL | Description |
+|---------|-----|-------------|
+| GET | `/api/admin/dashboard` | Dashboard admin |
+| GET/POST | `/api/admin/freelances` | Lister / Créer un freelance |
+| GET/PUT/DELETE | `/api/admin/freelances/{user}` | Voir / Modifier / Supprimer |
+| PATCH | `/api/admin/freelances/{user}/statut` | Activer / désactiver |
+
+---
+
+## Tests
+
+```bash
+php artisan test --compact
+```
+
+58 tests (Pest) couvrant auth, CRUD, policies, services, AI, devis.
+
+---
+
+## Documentation complète
+
+- [Schémas API détaillés](docs/api-schemas.md)
+- [Postman collection](docs/FreelanceScope.postman_collection.json)
+- [Spécification Angular](docs/FreelanceScope_Angular_Spec.md)
