@@ -12,8 +12,9 @@ it('can list clients', function () {
     $response = $this->actingAs($user)->getJson('/api/clients');
 
     expect($response->status())->toBe(200);
-    expect($response->json())->toHaveKeys(['data', 'meta']);
+    expect($response->json())->toHaveKey('data');
     expect($response->json('data'))->toHaveCount(3);
+    expect($response->json('total'))->toBe(3);
 });
 
 it('can create a client', function () {
@@ -26,7 +27,7 @@ it('can create a client', function () {
     ]);
 
     expect($response->status())->toBe(201);
-    expect($response->json('company_name'))->toBe('Acme Corp');
+    expect($response->json('data.company_name'))->toBe('Acme Corp');
 });
 
 it('can view a client', function () {

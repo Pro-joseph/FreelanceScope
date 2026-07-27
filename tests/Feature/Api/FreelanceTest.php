@@ -43,7 +43,7 @@ it('freelance can update profile', function () {
 it('freelance can view dashboard', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->getJson('/api/freelance/dashboard');
+    $response = $this->actingAs($user)->getJson('/api/dashboard/stats');
 
     expect($response->status())->toBe(200);
     expect($response->json())->toHaveKeys(['clients_count', 'projects_count', 'devis_count']);

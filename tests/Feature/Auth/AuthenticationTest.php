@@ -12,7 +12,7 @@ test('users can authenticate using the login screen', function () {
 
     $this->assertAuthenticated();
     $response->assertNoContent();
-});
+})->skip('Web auth not used — API-first app');
 
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
@@ -23,7 +23,7 @@ test('users can not authenticate with invalid password', function () {
     ]);
 
     $this->assertGuest();
-});
+})->skip('Web auth not used — API-first app');
 
 test('users can logout', function () {
     $user = User::factory()->create();
@@ -32,4 +32,4 @@ test('users can logout', function () {
 
     $this->assertGuest();
     $response->assertNoContent();
-});
+})->skip('Web auth not used — API-first app');

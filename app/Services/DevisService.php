@@ -49,7 +49,13 @@ class DevisService
         $filename = "devis_{$devis->id}.pdf";
 
         $devis->load(['client', 'project.features.estimate']);
-        $user = $devis->client->user;
+
+        $client = $devis->client;
+        if (! $client) {
+            throw new \RuntimeException('Cannot generate PDF: devis #'.$devis->id.' has no associated client.');
+        }
+
+        $user = $client->user;
 
         $pdf = Pdf::loadView('pdf.devis', [
             'devis' => $devis,
@@ -77,6 +83,18 @@ class DevisService
         }
 
         return $devis->updated_at->gt($devis->pdf_generated_at);
+    }
+
+    public function update(Devis $devis, array $data): Devis
+    {
+        $devis->update($data);
+
+        return $devis;
+    }
+
+    public function delete(Devis $devis): void
+    {
+        $devis->delete();
     }
 
     public function getPdfPath(Devis $devis): ?string

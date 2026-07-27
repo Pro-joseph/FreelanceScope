@@ -62,7 +62,15 @@ class ProjectController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'client_id' => ['required', 'exists:clients,id'],
+            'client_id' => [
+                'required',
+                'exists:clients,id',
+                function ($attribute, $value, $fail) {
+                    if (! Client::where('id', $value)->where('user_id', auth()->id())->exists()) {
+                        $fail('Le client sélectionné ne vous appartient pas.');
+                    }
+                },
+            ],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
         ]);

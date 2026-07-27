@@ -166,7 +166,7 @@ class ProjectFeatureController extends Controller
 
         $this->authorize('view', $estimate);
 
-        return $estimate;
+        return response()->json(['data' => $estimate]);
     }
 
     /**

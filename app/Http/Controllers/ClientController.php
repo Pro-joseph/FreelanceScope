@@ -68,7 +68,7 @@ class ClientController extends Controller
             ...$validated,
         ]);
 
-        return response()->json($client, 201);
+        return response()->json(['data' => $client], 201);
     }
 
     /**
@@ -85,13 +85,13 @@ class ClientController extends Controller
      *   "phone": "+212600000000", "projects_count": 3, "created_at": "..."
      * }
      */
-    public function show(Client $client): Client
+    public function show(Client $client): JsonResponse
     {
         $this->authorize('view', $client);
 
         $client->loadCount('projects');
 
-        return $client;
+        return response()->json(['data' => $client]);
     }
 
     /**
@@ -109,7 +109,7 @@ class ClientController extends Controller
      *   "id": 1, "company_name": "Acme Corp Updated", ...
      * }
      */
-    public function update(Request $request, Client $client): Client
+    public function update(Request $request, Client $client): JsonResponse
     {
         $this->authorize('update', $client);
 
@@ -121,7 +121,7 @@ class ClientController extends Controller
 
         $client->update($validated);
 
-        return $client;
+        return response()->json(['data' => $client]);
     }
 
     /**

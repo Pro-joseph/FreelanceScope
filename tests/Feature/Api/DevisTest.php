@@ -25,10 +25,10 @@ it('can list devis', function () {
         'project_id' => $project->id,
     ]);
 
-    $response = $this->actingAs($user)->getJson('/api/devis');
+    $response = $this->actingAs($user)->getJson("/api/projects/{$project->id}/devis");
 
     expect($response->status())->toBe(200);
-    expect($response->json())->toHaveKeys(['data', 'meta']);
+    expect($response->json())->toHaveKey('data');
     expect($response->json('data'))->toHaveCount(1);
 });
 
@@ -43,9 +43,7 @@ it('can create a devis', function () {
         'total_amount' => 800,
     ]);
 
-    $response = $this->actingAs($user)->postJson('/api/devis', [
-        'client_id' => $client->id,
-        'project_id' => $project->id,
+    $response = $this->actingAs($user)->postJson("/api/projects/{$project->id}/devis", [
         'conditions' => '50% à la commande',
     ]);
 

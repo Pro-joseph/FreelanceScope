@@ -22,21 +22,21 @@
 <body>
     <div class="header">
         <h1>DEVIS</h1>
-        <p>{{ $user->nom }} {{ $user->prenom }}</p>
-        <p>{{ $user->email }}</p>
+        <p>{{ $user?->nom ?? 'N/A' }} {{ $user?->prenom ?? '' }}</p>
+        <p>{{ $user?->email ?? 'N/A' }}</p>
     </div>
 
     <div class="client-info">
         <h3>Client</h3>
-        <p><strong>{{ $devis->client->company_name }}</strong></p>
-        <p>{{ $devis->client->email }}</p>
-        @if ($devis->client->phone)
+        <p><strong>{{ $devis->client?->company_name ?? 'N/A' }}</strong></p>
+        <p>{{ $devis->client?->email ?? 'N/A' }}</p>
+        @if ($devis->client?->phone)
             <p>{{ $devis->client->phone }}</p>
         @endif
     </div>
 
-    <h3>{{ $devis->project->name }}</h3>
-    <p>{{ $devis->project->description }}</p>
+    <h3>{{ $devis->project?->name ?? 'N/A' }}</h3>
+    <p>{{ $devis->project?->description ?? '' }}</p>
 
     <table>
         <thead>
@@ -49,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($devis->project->features as $feature)
+            @forelse ($devis->project?->features ?? [] as $feature)
                 <tr>
                     <td>{{ $feature->name }}</td>
                     <td><span class="badge">{{ $feature->complexity ?? '-' }}</span></td>
@@ -57,7 +57,9 @@
                     <td class="right">{{ $feature->estimate?->hourly_rate ? number_format($feature->estimate->hourly_rate, 2) . ' DH' : '-' }}</td>
                     <td class="right">{{ $feature->estimate?->total_amount ? number_format($feature->estimate->total_amount, 2) . ' DH' : '-' }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr><td colspan="5" class="right">Aucune fonctionnalité</td></tr>
+            @endforelse
             <tr class="total-row">
                 <td colspan="4">Total</td>
                 <td class="right">{{ number_format($devis->total_amount, 2) }} DH</td>

@@ -33,7 +33,7 @@ it('can create a feature', function () {
     ]);
 
     expect($response->status())->toBe(201);
-    expect($response->json('name'))->toBe("Page d'accueil");
+    expect($response->json('data.name'))->toBe("Page d'accueil");
 });
 
 it('can view a feature', function () {
@@ -52,9 +52,10 @@ it('can update a feature', function () {
     $user = User::factory()
         ->has(Client::factory()->has(Project::factory()->hasFeatures()))
         ->create();
-    $feature = $user->clients()->first()->projects()->first()->features()->first();
+    $project = $user->clients()->first()->projects()->first();
+    $feature = $project->features()->first();
 
-    $response = $this->actingAs($user)->putJson("/api/features/{$feature->id}", [
+    $response = $this->actingAs($user)->putJson("/api/projects/{$project->id}/features/{$feature->id}", [
         'name' => 'Feature modifiée',
         'complexity' => 'simple',
     ]);
