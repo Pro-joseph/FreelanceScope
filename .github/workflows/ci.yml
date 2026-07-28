@@ -50,3 +50,18 @@ jobs:
           tags: |
             joseph0070/freelancescope:api-latest
             joseph0070/freelancescope:api-${{ github.sha }}
+
+  dispatch-deploy:
+    needs: build-and-push
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ORCHESTRATOR_PAT }}
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: 'Pro-joseph',
+              repo: 'Repository_dispatch_FreelanceScope',
+              event_type: 'deploy',
+            });
