@@ -5,29 +5,19 @@ on:
     branches: ["master"]
   pull_request:
     branches: ["master"]
-  repository_dispatch:
-    types: [build-and-push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-
-      - name: Setup PHP 8.4
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
           extensions: mbstring, pdo_sqlite, zip
-
-      - name: Install dependencies
-        run: composer install --no-interaction --no-progress
-
-      - name: Generate app key
-        run: cp .env.example .env && php artisan key:generate
-
-      - name: Run tests
-        run: ./vendor/bin/pest
+      - run: composer install --no-interaction --no-progress
+      - run: cp .env.example .env && php artisan key:generate
+      - run: ./vendor/bin/pest
 
   build-and-push:
     needs: test
@@ -35,15 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -53,7 +39,6 @@ jobs:
 
   dispatch-deploy:
     needs: build-and-push
-    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v7
