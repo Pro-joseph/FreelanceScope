@@ -132,6 +132,7 @@ class DevisController extends Controller
 
         $validated = $request->validate([
             'conditions' => ['nullable', 'string', 'max:2000'],
+            'total_amount' => ['sometimes', 'numeric', 'min:0'],
             'status' => ['sometimes', 'string', 'in:draft,sent,accepted,refused'],
         ]);
 
