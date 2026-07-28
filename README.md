@@ -21,7 +21,7 @@ Configuration :
 - `DB_HOST=db`, `DB_DATABASE=freelancescope`
 - `QUEUE_CONNECTION=redis`
 
-Lancer le worker pour les jobs IA asynchrones :
+Lancer le worker pour les jobs IA asynchrones:
 
 ```bash
 docker exec freelancescope-app php artisan queue:work
