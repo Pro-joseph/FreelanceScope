@@ -41,9 +41,11 @@ class DevisController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function index(): JsonResponse
+    public function index(Project $project): JsonResponse
     {
-        $devis = $this->devisService->listForUser(auth()->id());
+        $this->authorize('view', $project);
+
+        $devis = $this->devisService->listForProject($project);
 
         return response()->json(['data' => DevisResource::collection($devis)]);
     }

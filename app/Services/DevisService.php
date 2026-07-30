@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Estimate;
+use App\Models\Project;
 use App\Models\ProjectFeature;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -17,6 +18,14 @@ class DevisService
         $clientIds = Client::where('user_id', $userId)->pluck('id');
 
         return Devis::whereIn('client_id', $clientIds)
+            ->with(['client', 'project'])
+            ->latest()
+            ->paginate(15);
+    }
+
+    public function listForProject(Project $project): LengthAwarePaginator
+    {
+        return Devis::where('project_id', $project->id)
             ->with(['client', 'project'])
             ->latest()
             ->paginate(15);
