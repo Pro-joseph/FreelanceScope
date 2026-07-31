@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -55,17 +56,11 @@ class ClientController extends Controller
      *   "phone": "+212600000000", "projects_count": 0, "created_at": "..."
      * }
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreClientRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'company_name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
-        ]);
-
         $client = Client::create([
             'user_id' => auth()->id(),
-            ...$validated,
+            ...$request->validated(),
         ]);
 
         return response()->json(['data' => $client], 201);
@@ -109,17 +104,11 @@ class ClientController extends Controller
      *   "id": 1, "company_name": "Acme Corp Updated", ...
      * }
      */
-    public function update(Request $request, Client $client): JsonResponse
+    public function update(UpdateClientRequest $request, Client $client): JsonResponse
     {
         $this->authorize('update', $client);
 
-        $validated = $request->validate([
-            'company_name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:20'],
-        ]);
-
-        $client->update($validated);
+        $client->update($request->validated());
 
         return response()->json(['data' => $client]);
     }

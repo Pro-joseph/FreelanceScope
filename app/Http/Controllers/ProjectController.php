@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -59,23 +60,9 @@ class ProjectController extends Controller
      *   "id": 1, "client_id": 1, "name": "Site e-commerce", "status": "draft", ...
      * }
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreProjectRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'client_id' => [
-                'required',
-                'exists:clients,id',
-                function ($attribute, $value, $fail) {
-                    if (! Client::where('id', $value)->where('user_id', auth()->id())->exists()) {
-                        $fail('Le client sélectionné ne vous appartient pas.');
-                    }
-                },
-            ],
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
-
-        $project = Project::create($validated);
+        $project = Project::create($request->validated());
 
         return response()->json(['data' => $project], 201);
     }
@@ -116,17 +103,11 @@ class ProjectController extends Controller
      *   "id": 1, "name": "Site e-commerce v2", "status": "in_progress", ...
      * }
      */
-    public function update(Request $request, Project $project): JsonResponse
+    public function update(UpdateProjectRequest $request, Project $project): JsonResponse
     {
         $this->authorize('update', $project);
 
-        $validated = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'status' => ['sometimes', 'string', 'in:draft,in_progress,completed,cancelled'],
-        ]);
-
-        $project->update($validated);
+        $project->update($request->validated());
 
         return response()->json(['data' => $project]);
     }

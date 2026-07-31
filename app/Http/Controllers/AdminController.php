@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Enums\UserStatut;
+use App\Http\Requests\StoreFreelanceRequest;
+use App\Http\Requests\UpdateFreelanceRequest;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 
 /**
  * @group Admin
@@ -77,16 +77,9 @@ class AdminController extends Controller
      *
      * @response 201 { "id": 3, "nom": "Doe", "prenom": "Jane", "email": "jane@example.com", "role": "freelance", ... }
      */
-    public function storeFreelance(Request $request): JsonResponse
+    public function storeFreelance(StoreFreelanceRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', Rules\Password::defaults()],
-            'telephone' => ['nullable', 'string', 'max:20'],
-            'taux_horaire' => ['nullable', 'numeric', 'min:0'],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'nom' => $validated['nom'],
@@ -138,19 +131,11 @@ class AdminController extends Controller
      *
      * @response 200 { "id": 2, "nom": "Dupont", ... }
      */
-    public function updateFreelance(Request $request, User $user): JsonResponse
+    public function updateFreelance(UpdateFreelanceRequest $request, User $user): JsonResponse
     {
         $this->authorize('update', $user);
 
-        $validated = $request->validate([
-            'nom' => ['sometimes', 'string', 'max:255'],
-            'prenom' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'telephone' => ['nullable', 'string', 'max:20'],
-            'taux_horaire' => ['nullable', 'numeric', 'min:0'],
-        ]);
-
-        $user->update($validated);
+        $user->update($request->validated());
 
         return response()->json($user);
     }

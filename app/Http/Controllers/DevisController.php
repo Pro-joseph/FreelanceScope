@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDevisRequest;
+use App\Http\Requests\UpdateDevisRequest;
 use App\Http\Resources\DevisResource;
 use App\Models\Devis;
 use App\Models\Project;
 use App\Services\DevisService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @group Devis
@@ -66,16 +67,12 @@ class DevisController extends Controller
      *   "data": { "id": 1, "total_amount": 3200, "status": "draft", ... }
      * }
      */
-    public function store(Request $request, Project $project): JsonResponse
+    public function store(StoreDevisRequest $request, Project $project): JsonResponse
     {
-        $validated = $request->validate([
-            'conditions' => ['nullable', 'string', 'max:2000'],
-        ]);
-
         $devis = $this->devisService->generate(
             $project->client_id,
             $project->id,
-            $validated['conditions'] ?? null,
+            $request->validated()['conditions'] ?? null,
         );
 
         return response()->json(new DevisResource($devis), 201);
@@ -128,17 +125,11 @@ class DevisController extends Controller
      *   "data": { "id": 1, "status": "sent", "conditions": "Paiement comptant", ... }
      * }
      */
-    public function update(Request $request, Project $project, Devis $devis): DevisResource
+    public function update(UpdateDevisRequest $request, Project $project, Devis $devis): DevisResource
     {
         $this->authorize('update', $devis);
 
-        $validated = $request->validate([
-            'conditions' => ['nullable', 'string', 'max:2000'],
-            'total_amount' => ['sometimes', 'numeric', 'min:0'],
-            'status' => ['sometimes', 'string', 'in:draft,sent,accepted,refused'],
-        ]);
-
-        $devis = $this->devisService->update($devis, $validated);
+        $devis = $this->devisService->update($devis, $request->validated());
 
         return new DevisResource($devis);
     }

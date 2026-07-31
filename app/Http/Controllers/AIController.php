@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GenerateEstimationRequest;
 use App\Jobs\GenerateEstimationJob;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @group AI Estimation
@@ -32,18 +32,14 @@ class AIController extends Controller
      *   "message": "Estimation en cours de génération."
      * }
      */
-    public function __invoke(Request $request, Project $project): JsonResponse
+    public function __invoke(GenerateEstimationRequest $request, Project $project): JsonResponse
     {
         $this->authorize('view', $project);
-
-        $validated = $request->validate([
-            'prompt' => ['required', 'string', 'max:5000'],
-        ]);
 
         GenerateEstimationJob::dispatch(
             $project,
             auth()->id(),
-            $validated['prompt'],
+            $request->validated()['prompt'],
         );
 
         return response()->json([

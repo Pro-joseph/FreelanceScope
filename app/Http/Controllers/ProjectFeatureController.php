@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFeatureRequest;
+use App\Http\Requests\UpdateEstimateRequest;
+use App\Http\Requests\UpdateFeatureRequest;
 use App\Models\Estimate;
 use App\Models\Project;
 use App\Models\ProjectFeature;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @group Project Features
@@ -56,15 +58,9 @@ class ProjectFeatureController extends Controller
      *   "description": "Page d'accueil avec présentation", "complexity": "moyen", "created_at": "..."
      * }
      */
-    public function store(Request $request, Project $project): JsonResponse
+    public function store(StoreFeatureRequest $request, Project $project): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'complexity' => ['nullable', 'string', 'in:simple,moyen,complexe'],
-        ]);
-
-        $feature = $project->features()->create($validated);
+        $feature = $project->features()->create($request->validated());
 
         return response()->json(['data' => $feature], 201);
     }
@@ -102,17 +98,11 @@ class ProjectFeatureController extends Controller
      *   "id": 1, "name": "Page d'accueil v2", "complexity": "simple", ...
      * }
      */
-    public function update(Request $request, Project $project, ProjectFeature $feature): JsonResponse
+    public function update(UpdateFeatureRequest $request, Project $project, ProjectFeature $feature): JsonResponse
     {
         $this->authorize('update', $feature);
 
-        $validated = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'complexity' => ['nullable', 'string', 'in:simple,moyen,complexe'],
-        ]);
-
-        $feature->update($validated);
+        $feature->update($request->validated());
 
         return response()->json(['data' => $feature]);
     }
@@ -185,14 +175,11 @@ class ProjectFeatureController extends Controller
      *   "id": 1, "hourly_rate": 65, "total_hours": 20, "total_amount": 1300, ...
      * }
      */
-    public function updateEstimate(Request $request, Estimate $estimate): Estimate
+    public function updateEstimate(UpdateEstimateRequest $request, Estimate $estimate): Estimate
     {
         $this->authorize('update', $estimate);
 
-        $validated = $request->validate([
-            'hourly_rate' => ['sometimes', 'numeric', 'min:0'],
-            'total_hours' => ['sometimes', 'numeric', 'min:0'],
-        ]);
+        $validated = $request->validated();
 
         $estimate->update([
             ...$validated,

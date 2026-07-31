@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @group Freelance Profile
@@ -54,19 +54,11 @@ class FreelanceController extends Controller
      *   "telephone": "+212600000000", "taux_horaire": 65, "statut": "actif"
      * }
      */
-    public function updateProfile(Request $request): JsonResponse
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
         $user = auth()->user();
 
-        $validated = $request->validate([
-            'nom' => ['sometimes', 'string', 'max:255'],
-            'prenom' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'telephone' => ['nullable', 'string', 'max:20'],
-            'taux_horaire' => ['nullable', 'numeric', 'min:0'],
-        ]);
-
-        $user->update($validated);
+        $user->update($request->validated());
 
         return response()->json($user->only(
             'id', 'nom', 'prenom', 'email', 'telephone', 'taux_horaire', 'statut'
