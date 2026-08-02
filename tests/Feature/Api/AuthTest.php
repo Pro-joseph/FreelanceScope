@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -16,6 +17,20 @@ it('users can register via api', function () {
     expect($response->status())->toBe(201);
     expect($response->json())->toHaveKeys(['user', 'token']);
     expect($response->json('user'))->toHaveKeys(['id', 'nom', 'prenom', 'email', 'role']);
+});
+
+it('register cannot escalate role to admin', function () {
+    $response = $this->postJson('/api/auth/register', [
+        'nom' => 'Doe',
+        'prenom' => 'Jane',
+        'email' => 'jane@example.com',
+        'password' => 'password',
+        'role' => 'admin',
+    ]);
+
+    expect($response->status())->toBe(201);
+    expect($response->json('user.role'))->toBe('freelance');
+    expect(User::where('email', 'jane@example.com')->first()->role)->toBe(UserRole::Freelance);
 });
 
 it('users can login via api', function () {

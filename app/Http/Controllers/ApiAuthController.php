@@ -49,7 +49,7 @@ class ApiAuthController extends Controller
             'prenom' => $validated['prenom'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'] ?? 'freelance',
+            'role' => 'freelance',
         ]);
 
         Auth::login($user);
