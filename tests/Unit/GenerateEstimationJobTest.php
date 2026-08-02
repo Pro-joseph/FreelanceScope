@@ -82,3 +82,34 @@ it('uses default taux_horaire of 50 when user has none', function () {
     expect($estimate->total_hours)->toEqual(10);
     expect($estimate->total_amount)->toEqual(500);
 });
+
+it('does not duplicate features when run twice with the same prompt', function () {
+    $user = User::factory()->create(['taux_horaire' => 75]);
+    $project = Project::factory()->create();
+
+    $aiResult = [
+        'parsed' => [
+            'features' => [
+                ['name' => 'Login', 'description' => 'Auth system', 'complexity' => 'simple', 'total_hours' => 8, 'risks' => []],
+                ['name' => 'Dashboard', 'description' => 'Admin panel', 'complexity' => 'moyen', 'total_hours' => 24, 'risks' => []],
+            ],
+        ],
+        'raw' => '{"features":[]}',
+        'model' => 'llama-3.3-70b-versatile',
+        'tokens_used' => 200,
+    ];
+
+    $ai = mock(AIEstimationService::class);
+    $ai->shouldReceive('generate')->with('Mon projet')->twice()->andReturn($aiResult);
+
+    $job = new GenerateEstimationJob($project, $user->id, 'Mon projet');
+    $job->handle($ai);
+    $job->handle($ai);
+
+    $features = ProjectFeature::where('project_id', $project->id)->get();
+    expect($features)->toHaveCount(2);
+    expect($features->pluck('name')->all())->toEqual(['Login', 'Dashboard']);
+
+    $estimates = Estimate::whereIn('feature_id', $features->pluck('id'))->get();
+    expect($estimates)->toHaveCount(2);
+});

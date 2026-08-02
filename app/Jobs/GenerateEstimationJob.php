@@ -37,6 +37,14 @@ class GenerateEstimationJob implements ShouldQueue
         $hourlyRate = $user->taux_horaire ?? 50;
 
         foreach ($result['parsed']['features'] as $featureData) {
+            $exists = ProjectFeature::where('project_id', $this->project->id)
+                ->where('name', $featureData['name'])
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
             $feature = ProjectFeature::create([
                 'project_id' => $this->project->id,
                 'name' => $featureData['name'],
