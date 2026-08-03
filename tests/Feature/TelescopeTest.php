@@ -1,30 +1,35 @@
 <?php
 
+use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     config()->set('telescope.enabled', true);
-    config()->set('services.telescope_key', 'secret-telescope-key');
 });
 
-it('denies telescope access without a valid key', function () {
-    $response = $this->get('/telescope');
-
-    $response->assertStatus(403);
+it('denies telescope access to guests', function () {
+    $this->get('/telescope')->assertStatus(403);
 });
 
-it('allows telescope access with a valid query key', function () {
-    $response = $this->get('/telescope?key=secret-telescope-key');
+it('denies telescope authorization to non-admins', function () {
+    $freelancer = User::factory()->create(['role' => UserRole::Freelance]);
 
-    $response->assertStatus(200);
+    $this->actingAs($freelancer)
+        ->postJson('/api/admin/telescope/authorize')
+        ->assertStatus(403);
+
+    $this->get('/telescope')->assertStatus(403);
 });
 
-it('keeps telescope access within the session after a valid key', function () {
-    $this->get('/telescope?key=secret-telescope-key')->assertStatus(200);
+it('allows telescope access to admins who authorized the session', function () {
+    $admin = User::factory()->create(['role' => UserRole::Admin]);
 
-    $response = $this->get('/telescope');
+    $this->actingAs($admin)
+        ->postJson('/api/admin/telescope/authorize')
+        ->assertStatus(200);
 
-    $response->assertStatus(200);
+    $this->get('/telescope')->assertStatus(200);
 });

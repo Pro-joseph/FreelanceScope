@@ -96,4 +96,5 @@ Route::prefix('admin')
         Route::delete('/freelances/{user}', [AdminController::class, 'destroyFreelance']);
         Route::get('/clients', [AdminController::class, 'listClients']);
         Route::get('/devis', [AdminController::class, 'listDevis']);
+        Route::post('/telescope/authorize', [AdminController::class, 'authorizeTelescope'])->middleware('web');
     });

@@ -230,4 +230,21 @@ class AdminController extends Controller
 
         return response()->json(null, 204);
     }
+
+    /**
+     * Autoriser l'accès à Telescope
+     *
+     * Déverrouille Telescope pour la session courante. Réservé aux admins
+     * (le middleware `admin` vérifie le rôle avant d'atteindre cette méthode).
+     *
+     * @authenticated
+     *
+     * @response 200 { "message": "Accès autorisé." }
+     */
+    public function authorizeTelescope(): JsonResponse
+    {
+        session(['telescope_admin' => true]);
+
+        return response()->json(['message' => 'Accès autorisé.']);
+    }
 }
