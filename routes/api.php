@@ -94,4 +94,6 @@ Route::prefix('admin')
         Route::put('/freelances/{user}', [AdminController::class, 'updateFreelance']);
         Route::patch('/freelances/{user}/statut', [AdminController::class, 'toggleStatut']);
         Route::delete('/freelances/{user}', [AdminController::class, 'destroyFreelance']);
+        Route::get('/clients', [AdminController::class, 'listClients']);
+        Route::get('/devis', [AdminController::class, 'listDevis']);
     });

@@ -6,11 +6,13 @@ use App\Enums\UserRole;
 use App\Enums\UserStatut;
 use App\Http\Requests\StoreFreelanceRequest;
 use App\Http\Requests\UpdateFreelanceRequest;
+use App\Http\Resources\DevisResource;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -59,6 +61,53 @@ class AdminController extends Controller
             ->get(['id', 'nom', 'prenom', 'email', 'telephone', 'statut', 'taux_horaire']);
 
         return response()->json($freelances);
+    }
+
+    /**
+     * Liste des clients
+     *
+     * Retourne tous les clients de la plateforme.
+     *
+     * @authenticated
+     *
+     * @response 200 {
+     *   "data": [
+     *     { "id": 1, "company_name": "Acme Corp", "email": "contact@acme.com", "phone": "+212600000000", "projects_count": 3, "owner": { "nom": "Jane", "prenom": "Doe" } }
+     *   ],
+     *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
+     * }
+     */
+    public function listClients(): JsonResponse
+    {
+        $clients = Client::with('user:id,nom,prenom')
+            ->withCount('projects')
+            ->latest()
+            ->paginate(15);
+
+        return response()->json($clients);
+    }
+
+    /**
+     * Liste des devis
+     *
+     * Retourne tous les devis de la plateforme.
+     *
+     * @authenticated
+     *
+     * @response 200 {
+     *   "data": [
+     *     { "id": 1, "client": { "company_name": "Acme Corp" }, "project": { "name": "Site e-commerce" }, "total_amount": 3200, "status": "draft", "created_at": "..." }
+     *   ],
+     *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
+     * }
+     */
+    public function listDevis(): AnonymousResourceCollection
+    {
+        $devis = Devis::with(['client', 'project'])
+            ->latest()
+            ->paginate(15);
+
+        return DevisResource::collection($devis);
     }
 
     /**

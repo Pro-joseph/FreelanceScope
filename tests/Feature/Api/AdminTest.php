@@ -1,6 +1,8 @@
 <?php
 
 use App\Enums\UserRole;
+use App\Models\Client;
+use App\Models\Devis;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -23,6 +25,26 @@ it('admin can list freelances', function () {
     $response = $this->actingAs($this->admin)->getJson('/api/admin/freelances');
 
     expect($response->status())->toBe(200);
+});
+
+it('admin can list all clients', function () {
+    Client::factory()->count(3)->create();
+
+    $response = $this->actingAs($this->admin)->getJson('/api/admin/clients');
+
+    expect($response->status())->toBe(200);
+    expect($response->json('data'))->toHaveCount(3);
+    expect($response->json('data.0'))->toHaveKeys(['id', 'company_name', 'email', 'projects_count']);
+});
+
+it('admin can list all devis', function () {
+    Devis::factory()->count(3)->create();
+
+    $response = $this->actingAs($this->admin)->getJson('/api/admin/devis');
+
+    expect($response->status())->toBe(200);
+    expect($response->json('data'))->toHaveCount(3);
+    expect($response->json('data.0'))->toHaveKeys(['id', 'client', 'project', 'total_amount', 'status']);
 });
 
 it('admin can create a freelance', function () {
@@ -73,4 +95,6 @@ it('non-admin cannot access admin endpoints', function () {
 
     expect($this->actingAs($user)->getJson('/api/admin/dashboard')->status())->toBe(403);
     expect($this->actingAs($user)->getJson('/api/admin/freelances')->status())->toBe(403);
+    expect($this->actingAs($user)->getJson('/api/admin/clients')->status())->toBe(403);
+    expect($this->actingAs($user)->getJson('/api/admin/devis')->status())->toBe(403);
 });
