@@ -35,4 +35,6 @@ return [
         ],
     ],
 
+    'telescope_key' => env('TELESCOPE_KEY'),
+
 ];
