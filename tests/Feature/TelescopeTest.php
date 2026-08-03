@@ -3,6 +3,7 @@
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
@@ -32,4 +33,12 @@ it('allows telescope access to admins who authorized the session', function () {
         ->assertStatus(200);
 
     $this->get('/telescope')->assertStatus(200);
+});
+
+it('records successful api requests', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->getJson('/api/auth/me')->assertStatus(200);
+
+    expect(DB::table('telescope_entries')->where('type', 'request')->count())->toBeGreaterThan(0);
 });
