@@ -40,6 +40,29 @@ it('freelance can update profile', function () {
     expect((float) $user->fresh()->taux_horaire)->toBe(75.0);
 });
 
+it('freelance can update own statut', function () {
+    $user = User::factory()->create(['statut' => 'actif']);
+
+    $response = $this->actingAs($user)->putJson('/api/freelance/profile', [
+        'statut' => 'inactif',
+    ]);
+
+    expect($response->status())->toBe(200);
+    expect($response->json())->toMatchArray(['statut' => 'inactif']);
+    expect($user->fresh()->statut->value)->toBe('inactif');
+});
+
+it('rejects an invalid statut', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->putJson('/api/freelance/profile', [
+        'statut' => 'on_holiday',
+    ]);
+
+    expect($response->status())->toBe(422);
+    expect($user->fresh()->statut->value)->toBe('actif');
+});
+
 it('freelance can view dashboard', function () {
     $user = User::factory()->create();
 
