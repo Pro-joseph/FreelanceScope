@@ -14,8 +14,8 @@ class UpdateEstimateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'hourly_rate' => ['sometimes', 'numeric', 'min:0'],
-            'total_hours' => ['sometimes', 'numeric', 'min:0'],
+            'hourly_rate' => ['sometimes', 'numeric', 'min:0', 'max:100000'],
+            'total_hours' => ['sometimes', 'numeric', 'min:0', 'max:100000'],
         ];
     }
 }

@@ -78,3 +78,17 @@ it('can delete a feature', function () {
     expect($response->status())->toBe(204);
     expect(ProjectFeature::find($feature->id))->toBeNull();
 });
+
+it('cannot create a feature on a foreign project', function () {
+    $owner = User::factory()
+        ->has(Client::factory()->hasProjects())
+        ->create();
+    $project = $owner->clients()->first()->projects()->first();
+    $attacker = User::factory()->create();
+
+    $response = $this->actingAs($attacker)->postJson("/api/projects/{$project->id}/features", [
+        'name' => 'Intrus',
+    ]);
+
+    expect($response->status())->toBe(403);
+});

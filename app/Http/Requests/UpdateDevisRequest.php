@@ -15,7 +15,6 @@ class UpdateDevisRequest extends FormRequest
     {
         return [
             'conditions' => ['nullable', 'string', 'max:2000'],
-            'total_amount' => ['sometimes', 'numeric', 'min:0'],
             'status' => ['sometimes', 'string', 'in:draft,sent,accepted,refused'],
         ];
     }

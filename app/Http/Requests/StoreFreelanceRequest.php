@@ -20,8 +20,8 @@ class StoreFreelanceRequest extends FormRequest
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', Rules\Password::defaults()],
-            'telephone' => ['nullable', 'string', 'max:20'],
-            'taux_horaire' => ['nullable', 'numeric', 'min:0'],
+            'telephone' => ['nullable', 'regex:/^[0-9+\-(). ]+$/u', 'max:20'],
+            'taux_horaire' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ];
     }
 }

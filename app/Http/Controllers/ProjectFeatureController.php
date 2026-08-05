@@ -60,6 +60,8 @@ class ProjectFeatureController extends Controller
      */
     public function store(StoreFeatureRequest $request, Project $project): JsonResponse
     {
+        $this->authorize('update', $project);
+
         $feature = $project->features()->create($request->validated());
 
         return response()->json(['data' => $feature], 201);

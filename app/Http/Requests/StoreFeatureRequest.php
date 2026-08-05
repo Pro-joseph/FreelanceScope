@@ -15,7 +15,7 @@ class StoreFeatureRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'description' => ['nullable', 'string', 'max:10000'],
             'complexity' => ['nullable', 'string', 'in:simple,moyen,complexe'],
         ];
     }

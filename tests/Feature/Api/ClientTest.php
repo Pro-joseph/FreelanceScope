@@ -80,3 +80,15 @@ it('cannot create client without company_name', function () {
     expect($response->status())->toBe(422);
     expect($response->json('errors'))->toHaveKeys(['company_name']);
 });
+
+it('rejects a phone containing text', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->postJson('/api/clients', [
+        'company_name' => 'Acme Corp',
+        'phone' => 'call me 0612345678',
+    ]);
+
+    expect($response->status())->toBe(422);
+    expect($response->json('errors'))->toHaveKeys(['phone']);
+});

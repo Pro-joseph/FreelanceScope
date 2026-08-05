@@ -19,8 +19,8 @@ class UpdateFreelanceRequest extends FormRequest
             'nom' => ['sometimes', 'string', 'max:255'],
             'prenom' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user?->id],
-            'telephone' => ['nullable', 'string', 'max:20'],
-            'taux_horaire' => ['nullable', 'numeric', 'min:0'],
+            'telephone' => ['nullable', 'regex:/^[0-9+\-(). ]+$/u', 'max:20'],
+            'taux_horaire' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ];
     }
 }

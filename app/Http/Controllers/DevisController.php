@@ -69,6 +69,8 @@ class DevisController extends Controller
      */
     public function store(StoreDevisRequest $request, Project $project): JsonResponse
     {
+        $this->authorize('update', $project);
+
         $devis = $this->devisService->generate(
             $project->client_id,
             $project->id,

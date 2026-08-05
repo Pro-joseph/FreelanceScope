@@ -110,3 +110,17 @@ it('can delete a devis', function () {
 
     expect(Devis::find($devis->id))->toBeNull();
 });
+
+it('cannot create a devis on a foreign project', function () {
+    $owner = User::factory()->create(['taux_horaire' => 50]);
+    $client = Client::factory()->for($owner)->create();
+    $project = Project::factory()->for($client)->create();
+    $attacker = User::factory()->create();
+
+    $response = $this->actingAs($attacker)->postJson("/api/projects/{$project->id}/devis", [
+        'conditions' => '50% à la commande',
+    ]);
+
+    expect($response->status())->toBe(403);
+    expect(Devis::count())->toBe(0);
+});

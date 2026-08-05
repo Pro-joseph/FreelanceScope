@@ -71,3 +71,14 @@ it('freelance can view dashboard', function () {
     expect($response->status())->toBe(200);
     expect($response->json())->toHaveKeys(['clients_count', 'projects_count', 'devis_count']);
 });
+
+it('rejects a telephone containing text', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->putJson('/api/freelance/profile', [
+        'telephone' => 'abc123',
+    ]);
+
+    expect($response->status())->toBe(422);
+    expect($response->json('errors'))->toHaveKeys(['telephone']);
+});
