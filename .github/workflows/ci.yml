@@ -17,6 +17,8 @@ jobs:
           extensions: mbstring, pdo_sqlite, zip
       - run: composer install --no-interaction --no-progress
       - run: cp .env.example .env && php artisan key:generate
+      - name: Check code style (Pint)
+        run: ./vendor/bin/pint --test
       - run: ./vendor/bin/pest
 
   build-and-push:
