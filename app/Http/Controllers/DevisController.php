@@ -9,6 +9,7 @@ use App\Models\Devis;
 use App\Models\Project;
 use App\Services\DevisService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * @group Devis
@@ -49,6 +50,36 @@ class DevisController extends Controller
         $devis = $this->devisService->listForProject($project);
 
         return response()->json(['data' => DevisResource::collection($devis)]);
+    }
+
+    /**
+     * Tous les devis de l'utilisateur
+     *
+     * Retourne la liste paginée de tous les devis de l'utilisateur connecté, tous projets confondus.
+     *
+     * @authenticated
+     *
+     * @response 200 {
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "client": { "company_name": "Acme Corp", "email": "contact@acme.com", "phone": "+212600000000" },
+     *       "project": { "name": "Site e-commerce", "description": "..." },
+     *       "features": null, "total_amount": 3200, "conditions": null,
+     *       "status": "draft", "pdf_path": null, "created_at": "..."
+     *     }
+     *   ],
+     *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
+     * }
+     */
+    public function listAll(): AnonymousResourceCollection
+    {
+        $devis = Devis::with(['client', 'project'])
+            ->whereHas('client', fn ($query) => $query->where('user_id', auth()->id()))
+            ->latest()
+            ->paginate(15);
+
+        return DevisResource::collection($devis);
     }
 
     /**

@@ -32,6 +32,51 @@ it('can list devis', function () {
     expect($response->json('data'))->toHaveCount(1);
 });
 
+it('can list all devis across projects', function () {
+    $user = User::factory()
+        ->has(Client::factory()->has(Project::factory()))
+        ->create();
+    $client = $user->clients()->first();
+    $project = $client->projects()->first();
+    $feature = ProjectFeature::factory()->for($project)->create();
+    $estimate = Estimate::factory()->for($feature, 'feature')->create();
+    Devis::factory()->create([
+        'estimate_id' => $estimate->id,
+        'client_id' => $client->id,
+        'project_id' => $project->id,
+    ]);
+
+    $response = $this->actingAs($user)->getJson('/api/devis');
+
+    expect($response->status())->toBe(200);
+    expect($response->json())->toHaveKey('data');
+    expect($response->json('data'))->toHaveCount(1);
+    expect($response->json('data.0.client.company_name'))->toBe($client->company_name);
+    expect($response->json('data.0.project.name'))->toBe($project->name);
+});
+
+it('does not list devis from other users', function () {
+    $owner = User::factory()
+        ->has(Client::factory()->has(Project::factory()))
+        ->create();
+    $client = $owner->clients()->first();
+    $project = $client->projects()->first();
+    $feature = ProjectFeature::factory()->for($project)->create();
+    $estimate = Estimate::factory()->for($feature, 'feature')->create();
+    Devis::factory()->create([
+        'estimate_id' => $estimate->id,
+        'client_id' => $client->id,
+        'project_id' => $project->id,
+    ]);
+
+    $other = User::factory()->create();
+
+    $response = $this->actingAs($other)->getJson('/api/devis');
+
+    expect($response->status())->toBe(200);
+    expect($response->json('data'))->toHaveCount(0);
+});
+
 it('can create a devis', function () {
     $user = User::factory()->create(['taux_horaire' => 50]);
     $client = Client::factory()->for($user)->create();

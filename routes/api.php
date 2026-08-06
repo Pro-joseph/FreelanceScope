@@ -61,7 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects/{project}/ai-estimate', AIController::class);
     Route::get('/projects/{project}/ai-analyses', [AIController::class, 'analyses']);
 
-    // Devis — nested under projects (matching Angular DevisService)
+    // Devis — all (dashboard) + nested under projects (matching Angular DevisService)
+    Route::get('/devis', [DevisController::class, 'listAll']);
     Route::get('/projects/{project}/devis', [DevisController::class, 'index']);
     Route::post('/projects/{project}/devis', [DevisController::class, 'store']);
     Route::get('/projects/{project}/devis/{devis}', [DevisController::class, 'show']);
