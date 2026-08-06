@@ -6,7 +6,9 @@ use App\Enums\UserRole;
 use App\Enums\UserStatut;
 use App\Http\Requests\StoreFreelanceRequest;
 use App\Http\Requests\UpdateFreelanceRequest;
+use App\Http\Resources\ClientResource;
 use App\Http\Resources\DevisResource;
+use App\Http\Resources\UserResource;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Project;
@@ -60,7 +62,7 @@ class AdminController extends Controller
         $freelances = User::where('role', UserRole::Freelance)
             ->get(['id', 'nom', 'prenom', 'email', 'telephone', 'statut', 'taux_horaire']);
 
-        return response()->json($freelances);
+        return response()->json(UserResource::collection($freelances)->resolve());
     }
 
     /**
@@ -77,14 +79,14 @@ class AdminController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function listClients(): JsonResponse
+    public function listClients(): AnonymousResourceCollection
     {
         $clients = Client::with('user:id,nom,prenom')
             ->withCount('projects')
             ->latest()
             ->paginate(15);
 
-        return response()->json($clients);
+        return ClientResource::collection($clients);
     }
 
     /**
@@ -140,7 +142,7 @@ class AdminController extends Controller
             'role' => UserRole::Freelance,
         ]);
 
-        return response()->json($user, 201);
+        return response()->json(new UserResource($user), 201);
     }
 
     /**
@@ -158,9 +160,7 @@ class AdminController extends Controller
     {
         $this->authorize('view', $user);
 
-        return response()->json($user->only(
-            'id', 'nom', 'prenom', 'email', 'telephone', 'statut', 'taux_horaire'
-        ));
+        return response()->json(new UserResource($user));
     }
 
     /**
@@ -186,7 +186,7 @@ class AdminController extends Controller
 
         $user->update($request->validated());
 
-        return response()->json($user);
+        return response()->json(new UserResource($user));
     }
 
     /**
@@ -208,7 +208,7 @@ class AdminController extends Controller
             'statut' => $user->statut === UserStatut::Actif ? UserStatut::Inactif->value : UserStatut::Actif->value,
         ]);
 
-        return response()->json($user);
+        return response()->json(new UserResource($user));
     }
 
     /**

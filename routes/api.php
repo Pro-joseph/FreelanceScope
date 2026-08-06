@@ -8,6 +8,7 @@ use App\Http\Controllers\DevisController;
 use App\Http\Controllers\FreelanceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectFeatureController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,9 +36,7 @@ Route::prefix('auth')->middleware('guest')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
-    Route::get('/auth/me', function (Request $request) {
-        return $request->user();
-    });
+    Route::get('/auth/me', fn (Request $request) => response()->json(new UserResource($request->user())));
     Route::post('/auth/logout', [ApiAuthController::class, 'logout']);
 
     // Clients

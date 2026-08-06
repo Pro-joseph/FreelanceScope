@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * @group Clients
@@ -32,12 +33,14 @@ class ClientController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function index(): LengthAwarePaginator
+    public function index(): AnonymousResourceCollection
     {
-        return Client::where('user_id', auth()->id())
-            ->withCount('projects')
-            ->latest()
-            ->paginate(15);
+        return ClientResource::collection(
+            Client::where('user_id', auth()->id())
+                ->withCount('projects')
+                ->latest()
+                ->paginate(15)
+        );
     }
 
     /**
@@ -63,7 +66,7 @@ class ClientController extends Controller
             ...$request->validated(),
         ]);
 
-        return response()->json(['data' => $client], 201);
+        return response()->json(['data' => new ClientResource($client)], 201);
     }
 
     /**
@@ -86,7 +89,7 @@ class ClientController extends Controller
 
         $client->loadCount('projects');
 
-        return response()->json(['data' => $client]);
+        return response()->json(['data' => new ClientResource($client)]);
     }
 
     /**
@@ -110,7 +113,7 @@ class ClientController extends Controller
 
         $client->update($request->validated());
 
-        return response()->json(['data' => $client]);
+        return response()->json(['data' => new ClientResource($client)]);
     }
 
     /**

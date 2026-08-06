@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Models\Client;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * @group Projects
@@ -34,15 +35,17 @@ class ProjectController extends Controller
      *   "meta": { "current_page": 1, "per_page": 15, "total": 1 }
      * }
      */
-    public function index(): LengthAwarePaginator
+    public function index(): AnonymousResourceCollection
     {
         $clientIds = Client::where('user_id', auth()->id())->pluck('id');
 
-        return Project::whereIn('client_id', $clientIds)
-            ->with('client')
-            ->withCount('features')
-            ->latest()
-            ->paginate(15);
+        return ProjectResource::collection(
+            Project::whereIn('client_id', $clientIds)
+                ->with('client')
+                ->withCount('features')
+                ->latest()
+                ->paginate(15)
+        );
     }
 
     /**
@@ -64,7 +67,7 @@ class ProjectController extends Controller
     {
         $project = Project::create($request->validated());
 
-        return response()->json(['data' => $project], 201);
+        return response()->json(['data' => new ProjectResource($project)], 201);
     }
 
     /**
@@ -85,7 +88,7 @@ class ProjectController extends Controller
         $project->load(['client', 'features.estimate']);
         $project->loadCount('features');
 
-        return response()->json(['data' => $project]);
+        return response()->json(['data' => new ProjectResource($project)]);
     }
 
     /**
@@ -109,7 +112,7 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
-        return response()->json(['data' => $project]);
+        return response()->json(['data' => new ProjectResource($project)]);
     }
 
     /**

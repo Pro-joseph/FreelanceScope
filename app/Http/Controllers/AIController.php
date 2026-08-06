@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GenerateEstimationRequest;
+use App\Http\Resources\AiAnalysisResource;
 use App\Jobs\GenerateEstimationJob;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
@@ -74,6 +75,6 @@ class AIController extends Controller
 
         $analyses = $project->aiAnalyses()->latest()->get();
 
-        return response()->json($analyses);
+        return response()->json(AiAnalysisResource::collection($analyses)->resolve());
     }
 }

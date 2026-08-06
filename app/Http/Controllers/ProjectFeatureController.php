@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFeatureRequest;
 use App\Http\Requests\UpdateEstimateRequest;
 use App\Http\Requests\UpdateFeatureRequest;
+use App\Http\Resources\EstimateResource;
+use App\Http\Resources\ProjectFeatureResource;
 use App\Models\Estimate;
 use App\Models\Project;
 use App\Models\ProjectFeature;
@@ -38,7 +40,7 @@ class ProjectFeatureController extends Controller
         $this->authorize('view', $project);
 
         return response()->json([
-            'data' => $project->features()->latest()->get()->toArray(),
+            'data' => ProjectFeatureResource::collection($project->features()->latest()->get()),
         ]);
     }
 
@@ -64,7 +66,7 @@ class ProjectFeatureController extends Controller
 
         $feature = $project->features()->create($request->validated());
 
-        return response()->json(['data' => $feature], 201);
+        return response()->json(['data' => new ProjectFeatureResource($feature)], 201);
     }
 
     /**
@@ -82,7 +84,7 @@ class ProjectFeatureController extends Controller
     {
         $this->authorize('view', $feature);
 
-        return response()->json(['data' => $feature]);
+        return response()->json(['data' => new ProjectFeatureResource($feature)]);
     }
 
     /**
@@ -106,7 +108,7 @@ class ProjectFeatureController extends Controller
 
         $feature->update($request->validated());
 
-        return response()->json(['data' => $feature]);
+        return response()->json(['data' => new ProjectFeatureResource($feature)]);
     }
 
     /**
@@ -158,7 +160,7 @@ class ProjectFeatureController extends Controller
 
         $this->authorize('view', $estimate);
 
-        return response()->json(['data' => $estimate]);
+        return response()->json(['data' => new EstimateResource($estimate)]);
     }
 
     /**
@@ -177,7 +179,7 @@ class ProjectFeatureController extends Controller
      *   "id": 1, "hourly_rate": 65, "total_hours": 20, "total_amount": 1300, ...
      * }
      */
-    public function updateEstimate(UpdateEstimateRequest $request, Estimate $estimate): Estimate
+    public function updateEstimate(UpdateEstimateRequest $request, Estimate $estimate): JsonResponse
     {
         $this->authorize('update', $estimate);
 
@@ -189,6 +191,6 @@ class ProjectFeatureController extends Controller
                 * ($validated['total_hours'] ?? $estimate->total_hours),
         ]);
 
-        return $estimate;
+        return response()->json(['data' => new EstimateResource($estimate)]);
     }
 }

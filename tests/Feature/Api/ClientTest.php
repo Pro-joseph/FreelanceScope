@@ -14,7 +14,7 @@ it('can list clients', function () {
     expect($response->status())->toBe(200);
     expect($response->json())->toHaveKey('data');
     expect($response->json('data'))->toHaveCount(3);
-    expect($response->json('total'))->toBe(3);
+    expect($response->json('meta.total'))->toBe(3);
 });
 
 it('can create a client', function () {

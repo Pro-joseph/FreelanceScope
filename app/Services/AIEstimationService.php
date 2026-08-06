@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AiEstimationResource;
+use Illuminate\Http\Request as HttpRequest;
 use OpenAI\Laravel\Facades\OpenAI;
 
 class AIEstimationService
@@ -10,22 +12,15 @@ class AIEstimationService
 
     public function generate(string $prompt): array
     {
-        $systemPrompt = <<<'PROMPT'
+        $shapeJson = json_encode(
+            AiEstimationResource::shape(),
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        );
+
+        $systemPrompt = <<<PROMPT
 Tu es un expert en estimation de projets web. Analyse le besoin client et retourne UNIQUEMENT un JSON valide (sans markdown, sans ```) avec cette structure exacte :
 
-{
-  "features": [
-    {
-      "name": "Nom de la fonctionnalité",
-      "description": "Description concise",
-      "complexity": "simple|moyen|complexe",
-      "total_hours": 8,
-      "risks": ["risque éventuel"]
-    }
-  ],
-  "missing_info": ["information manquante"],
-  "scope_creep_risks": ["risque de dérive"]
-}
+{$shapeJson}
 
 Règles :
 - Propose entre 3 et 12 fonctionnalités
@@ -70,6 +65,6 @@ PROMPT;
             throw new \RuntimeException('Failed to parse AI response: '.json_last_error_msg());
         }
 
-        return $decoded;
+        return (new AiEstimationResource($decoded))->toArray(new HttpRequest);
     }
 }

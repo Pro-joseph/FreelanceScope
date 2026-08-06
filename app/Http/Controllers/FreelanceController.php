@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Project;
@@ -31,9 +32,7 @@ class FreelanceController extends Controller
     {
         $user = auth()->user();
 
-        return response()->json($user->only(
-            'id', 'nom', 'prenom', 'email', 'telephone', 'taux_horaire', 'statut'
-        ));
+        return response()->json(new UserResource($user));
     }
 
     /**
@@ -60,9 +59,7 @@ class FreelanceController extends Controller
 
         $user->update($request->validated());
 
-        return response()->json($user->only(
-            'id', 'nom', 'prenom', 'email', 'telephone', 'taux_horaire', 'statut'
-        ));
+        return response()->json(new UserResource($user));
     }
 
     /**

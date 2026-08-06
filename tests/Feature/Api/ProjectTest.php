@@ -17,7 +17,7 @@ it('can list projects', function () {
     expect($response->status())->toBe(200);
     expect($response->json())->toHaveKey('data');
     expect($response->json('data'))->toHaveCount(2);
-    expect($response->json('total'))->toBe(2);
+    expect($response->json('meta.total'))->toBe(2);
 });
 
 it('can create a project', function () {
