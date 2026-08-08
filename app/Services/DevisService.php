@@ -83,6 +83,10 @@ class DevisService
 
     public function needsRegeneration(Devis $devis): bool
     {
+        if (! $this->getPdfPath($devis)) {
+            return true;
+        }
+
         if (! $devis->pdf_path) {
             return true;
         }

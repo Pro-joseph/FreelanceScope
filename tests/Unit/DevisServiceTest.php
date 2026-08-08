@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ProjectFeature;
 use App\Services\DevisService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -55,6 +56,9 @@ it('needs regeneration when pdf_generated_at is null', function () {
 });
 
 it('does not need regeneration when pdf is up to date', function () {
+    Storage::fake('devis');
+    Storage::disk('devis')->put('devis_1.pdf', 'fake content');
+
     $devis = Devis::factory()->make([
         'pdf_path' => 'devis_1.pdf',
         'pdf_generated_at' => now(),
@@ -62,6 +66,18 @@ it('does not need regeneration when pdf is up to date', function () {
     $devis->updated_at = now()->subHour();
 
     expect(app(DevisService::class)->needsRegeneration($devis))->toBeFalse();
+});
+
+it('needs regeneration when pdf file is missing on disk', function () {
+    Storage::fake('devis');
+
+    $devis = Devis::factory()->make([
+        'pdf_path' => 'devis_missing.pdf',
+        'pdf_generated_at' => now(),
+    ]);
+    $devis->updated_at = now()->subHour();
+
+    expect(app(DevisService::class)->needsRegeneration($devis))->toBeTrue();
 });
 
 it('needs regeneration when devis was updated after pdf generation', function () {
