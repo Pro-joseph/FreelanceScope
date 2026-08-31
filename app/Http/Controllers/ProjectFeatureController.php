@@ -64,7 +64,21 @@ class ProjectFeatureController extends Controller
     {
         $this->authorize('update', $project);
 
-        $feature = $project->features()->create($request->validated());
+        $validated = $request->validated();
+
+        $feature = $project->features()->create(collect($validated)->only(['name', 'description', 'complexity'])->toArray());
+
+        if (isset($validated['hourly_rate']) || isset($validated['total_hours'])) {
+            $rate = $validated['hourly_rate'] ?? $request->user()->taux_horaire ?? 50;
+            $hours = $validated['total_hours'] ?? 0;
+
+            $feature->estimate()->create([
+                'hourly_rate' => $rate,
+                'total_hours' => $hours,
+                'total_amount' => $rate * $hours,
+            ]);
+            $feature->load('estimate');
+        }
 
         return response()->json(['data' => new ProjectFeatureResource($feature)], 201);
     }

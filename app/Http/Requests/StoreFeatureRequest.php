@@ -17,6 +17,8 @@ class StoreFeatureRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:10000'],
             'complexity' => ['nullable', 'string', 'in:simple,moyen,complexe'],
+            'hourly_rate' => ['nullable', 'numeric', 'min:0', 'max:100000'],
+            'total_hours' => ['nullable', 'numeric', 'min:0', 'max:100000'],
         ];
     }
 }
