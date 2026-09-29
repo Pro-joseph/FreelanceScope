@@ -8,8 +8,6 @@ use OpenAI\Laravel\Facades\OpenAI;
 
 class AIEstimationService
 {
-    private const MODEL = 'llama-3.3-70b-versatile';
-
     public function generate(string $prompt): array
     {
         $shapeJson = json_encode(
@@ -18,7 +16,7 @@ class AIEstimationService
         );
 
         $systemPrompt = <<<PROMPT
-Tu es un expert en estimation de projets web. Analyse le besoin client et retourne UNIQUEMENT un JSON valide (sans markdown, sans ```) avec cette structure exacte :
+Tu es un expert en estimation de projets web. Analyse le besoin client et retourne UNIQUEMENT un JSON valide (sans markdown, sans ```, sans raisonnement, commence directement par {) avec cette structure exacte :
 
 {$shapeJson}
 
@@ -30,7 +28,8 @@ Règles :
 PROMPT;
 
         $response = OpenAI::chat()->create([
-            'model' => self::MODEL,
+            'model' => config('ai.model'),
+            'reasoning_effort' => config('ai.reasoning_effort'),
             'messages' => [
                 ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user', 'content' => $prompt],
@@ -45,7 +44,7 @@ PROMPT;
         return [
             'parsed' => $this->parseResponse($content),
             'raw' => $content,
-            'model' => self::MODEL,
+            'model' => config('ai.model'),
             'tokens_used' => $tokensUsed,
         ];
     }

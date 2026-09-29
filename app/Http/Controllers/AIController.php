@@ -63,7 +63,7 @@ class AIController extends Controller
      *     "project_id": 1,
      *     "prompt": "Je veux un site e-commerce...",
      *     "response": "...",
-     *     "model": "llama-3.3-70b-versatile",
+     *     "model": "openai/gpt-oss-120b",
      *     "tokens_used": 1500,
      *     "created_at": "2026-07-21T12:00:00.000000Z"
      *   }

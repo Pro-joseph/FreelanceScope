@@ -34,7 +34,7 @@ it('parses a clean JSON response', function () {
 
     expect($result['parsed'])->toBe($data);
     expect($result['raw'])->toBe($json);
-    expect($result['model'])->toBe('llama-3.3-70b-versatile');
+    expect($result['model'])->toBe(config('ai.model'));
     expect($result['tokens_used'])->toBe(100);
 });
 
